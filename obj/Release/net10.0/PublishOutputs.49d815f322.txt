@@ -1,0 +1,9 @@
+C:\Users\MassTech\Desktop\專案\hsinchugas_efcs_api\obj\Release\net10.0\PubTmp\Out\hsinchugas_efcs_api.exe
+C:\Users\MassTech\Desktop\專案\hsinchugas_efcs_api\obj\Release\net10.0\PubTmp\Out\appsettings.Development.json
+C:\Users\MassTech\Desktop\專案\hsinchugas_efcs_api\obj\Release\net10.0\PubTmp\Out\appsettings.json
+C:\Users\MassTech\Desktop\專案\hsinchugas_efcs_api\obj\Release\net10.0\PubTmp\Out\hsinchugas_efcs_api.dll
+C:\Users\MassTech\Desktop\專案\hsinchugas_efcs_api\obj\Release\net10.0\PubTmp\Out\hsinchugas_efcs_api.deps.json
+C:\Users\MassTech\Desktop\專案\hsinchugas_efcs_api\obj\Release\net10.0\PubTmp\Out\hsinchugas_efcs_api.runtimeconfig.json
+C:\Users\MassTech\Desktop\專案\hsinchugas_efcs_api\obj\Release\net10.0\PubTmp\Out\hsinchugas_efcs_api.pdb
+C:\Users\MassTech\Desktop\專案\hsinchugas_efcs_api\obj\Release\net10.0\PubTmp\Out\Microsoft.AspNetCore.OpenApi.dll
+C:\Users\MassTech\Desktop\專案\hsinchugas_efcs_api\obj\Release\net10.0\PubTmp\Out\Microsoft.OpenApi.dll

@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "5aoFe4A/u1Y=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\MassTech\\Desktop\\專案\\hsinchugas_efcs_api\\hsinchugas_efcs_api.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\MassTech\\.nuget\\packages\\microsoft.aspnetcore.openapi\\10.0.0\\microsoft.aspnetcore.openapi.10.0.0.nupkg.sha512",
+    "C:\\Users\\MassTech\\.nuget\\packages\\microsoft.openapi\\2.0.0\\microsoft.openapi.2.0.0.nupkg.sha512"
+  ],
+  "logs": []
+}

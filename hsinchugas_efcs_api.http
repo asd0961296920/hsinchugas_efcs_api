@@ -1,0 +1,6 @@
+@hsinchugas_efcs_api_HostAddress = http://localhost:5096
+
+GET {{hsinchugas_efcs_api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
