@@ -1,9 +1,12 @@
+using hsinchugas_efcs_api.Model;
+using hsinchugas_efcs_api.Service;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
 
 namespace hsinchugas_efcs_api.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("")]
     public class WeatherForecastController : ControllerBase
     {
         private static readonly string[] Summaries =
@@ -11,7 +14,7 @@ namespace hsinchugas_efcs_api.Controllers
             "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
         ];
 
-        [HttpGet(Name = "GetWeatherForecast")]
+        [HttpGet("GetWeatherForecast")]
         public IEnumerable<WeatherForecast> Get()
         {
             return Enumerable.Range(1, 5).Select(index => new WeatherForecast
@@ -22,5 +25,25 @@ namespace hsinchugas_efcs_api.Controllers
             })
             .ToArray();
         }
+
+        [HttpPost("api/DIG")]
+        public async Task<IActionResult> PostDIG([FromBody] JsonElement rawJson)
+        {
+
+
+            string docData = JsonSerializer.Serialize(rawJson);
+
+
+            return Ok(EfcsService.GenerateDIG(docData));
+        }
+
+
+
+
+
+
+
+
+
     }
 }
