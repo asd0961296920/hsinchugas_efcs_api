@@ -1,8 +1,60 @@
 [
   {
     "ContainingType": "hsinchugas_efcs_api.Controllers.WeatherForecastController",
+    "Method": "PostDIG",
+    "RelativePath": "api/DIG",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "rawJson",
+        "Type": "System.Text.Json.JsonElement",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "hsinchugas_efcs_api.Controllers.EfcsController",
+    "Method": "PostB207",
+    "RelativePath": "api/efcs/b207",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "hsinchugas_efcs_api.Model.ALL\u00601[[hsinchugas_efcs_api.Model.BillerDataQueryRq, hsinchugas_efcs_api, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "hsinchugas_efcs_api.Controllers.EfcsController",
+    "Method": "PostB208",
+    "RelativePath": "api/efcs/b208",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "hsinchugas_efcs_api.Controllers.EfcsController",
+    "Method": "PostB219",
+    "RelativePath": "api/efcs/b219",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "hsinchugas_efcs_api.Controllers.WeatherForecastController",
     "Method": "Get",
-    "RelativePath": "WeatherForecast",
+    "RelativePath": "GetWeatherForecast",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -17,7 +69,6 @@
         ],
         "StatusCode": 200
       }
-    ],
-    "EndpointName": "GetWeatherForecast"
+    ]
   }
 ]

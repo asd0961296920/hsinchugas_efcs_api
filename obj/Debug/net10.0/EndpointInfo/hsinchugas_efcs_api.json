@@ -10,12 +10,67 @@
     }
   ],
   "paths": {
-    "/WeatherForecast": {
+    "/api/efcs/b207": {
+      "post": {
+        "tags": [
+          "Efcs"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ALLOfBillerDataQueryRq"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ALLOfBillerDataQueryRq"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ALLOfBillerDataQueryRq"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/efcs/b208": {
+      "post": {
+        "tags": [
+          "Efcs"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/efcs/b219": {
+      "post": {
+        "tags": [
+          "Efcs"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/GetWeatherForecast": {
       "get": {
         "tags": [
           "WeatherForecast"
         ],
-        "operationId": "GetWeatherForecast",
         "responses": {
           "200": {
             "description": "OK",
@@ -48,10 +103,167 @@
           }
         }
       }
+    },
+    "/api/DIG": {
+      "post": {
+        "tags": [
+          "WeatherForecast"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/JsonElement"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/JsonElement"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/JsonElement"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
     }
   },
   "components": {
     "schemas": {
+      "ALLOfBillerDataQueryRq": {
+        "type": "object",
+        "properties": {
+          "fun": {
+            "$ref": "#/components/schemas/FUN"
+          },
+          "docdata": {
+            "$ref": "#/components/schemas/DOCDATAOfBillerDataQueryRq"
+          },
+          "sec": {
+            "$ref": "#/components/schemas/SEC"
+          }
+        }
+      },
+      "BillerDataQueryRq": {
+        "type": "object",
+        "properties": {
+          "querY_TYPE": {
+            "type": "string"
+          },
+          "querY_DATA1": {
+            "type": "string"
+          },
+          "querY_DATA2": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "querY_DATA3": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "querY_DATA4": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "querY_DATA5": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "DOCDATAOfBillerDataQueryRq": {
+        "type": "object",
+        "properties": {
+          "head": {
+            "$ref": "#/components/schemas/HEAD"
+          },
+          "body": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/BillerDataQueryRq"
+              }
+            ]
+          }
+        }
+      },
+      "FUN": {
+        "type": "object",
+        "properties": {
+          "funname": {
+            "type": "string"
+          },
+          "ver": {
+            "type": "string"
+          }
+        }
+      },
+      "HEAD": {
+        "type": "object",
+        "properties": {
+          "srC_ID": {
+            "type": "string"
+          },
+          "desT_ID": {
+            "type": "string"
+          },
+          "txN_DATETIME": {
+            "type": "string"
+          },
+          "txN_NO": {
+            "type": "string"
+          },
+          "prS_CODE": {
+            "type": "string"
+          },
+          "billeR_ID": {
+            "type": "string"
+          },
+          "btypeclass": {
+            "type": "string"
+          },
+          "icchK_CODE": {
+            "type": "string"
+          },
+          "icchK_CODE_DESC": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "JsonElement": { },
+      "SEC": {
+        "type": "object",
+        "properties": {
+          "dig": {
+            "type": "string"
+          },
+          "mac": {
+            "type": "string"
+          }
+        }
+      },
       "WeatherForecast": {
         "type": "object",
         "properties": {
@@ -86,6 +298,9 @@
     }
   },
   "tags": [
+    {
+      "name": "Efcs"
+    },
     {
       "name": "WeatherForecast"
     }
