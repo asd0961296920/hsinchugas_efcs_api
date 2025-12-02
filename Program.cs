@@ -1,5 +1,7 @@
+using hsinchugas_efcs_api;
 using hsinchugas_efcs_api.Service;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +10,13 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
+builder.Services.AddSingleton<OracleDbContext>();
+
+builder.Services.AddControllers()
+    .AddJsonOptions(opts =>
+    {
+        opts.JsonSerializerOptions.PropertyNamingPolicy = null;  // Ãö³¬ camelCase
+    });
 
 builder.Services.Configure<ApiBehaviorOptions>(options =>
 {

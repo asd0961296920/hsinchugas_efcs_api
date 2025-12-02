@@ -1,11 +1,25 @@
 {
   "version": 2,
-  "dgSpecHash": "5aoFe4A/u1Y=",
+  "dgSpecHash": "dW2TLqzOO5k=",
   "success": true,
   "projectFilePath": "C:\\Users\\MassTech\\Desktop\\專案\\hsinchugas_efcs_api\\hsinchugas_efcs_api.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\MassTech\\.nuget\\packages\\dapper\\2.1.66\\dapper.2.1.66.nupkg.sha512",
+    "C:\\Users\\MassTech\\.nuget\\packages\\devart.data\\6.0.290\\devart.data.6.0.290.nupkg.sha512",
+    "C:\\Users\\MassTech\\.nuget\\packages\\devart.data.oracle\\10.4.290\\devart.data.oracle.10.4.290.nupkg.sha512",
+    "C:\\Users\\MassTech\\.nuget\\packages\\devart.data.oracle.efcore\\10.4.290.9\\devart.data.oracle.efcore.10.4.290.9.nupkg.sha512",
     "C:\\Users\\MassTech\\.nuget\\packages\\microsoft.aspnetcore.openapi\\10.0.0\\microsoft.aspnetcore.openapi.10.0.0.nupkg.sha512",
-    "C:\\Users\\MassTech\\.nuget\\packages\\microsoft.openapi\\2.0.0\\microsoft.openapi.2.0.0.nupkg.sha512"
+    "C:\\Users\\MassTech\\.nuget\\packages\\microsoft.entityframeworkcore\\10.0.0\\microsoft.entityframeworkcore.10.0.0.nupkg.sha512",
+    "C:\\Users\\MassTech\\.nuget\\packages\\microsoft.entityframeworkcore.abstractions\\10.0.0\\microsoft.entityframeworkcore.abstractions.10.0.0.nupkg.sha512",
+    "C:\\Users\\MassTech\\.nuget\\packages\\microsoft.entityframeworkcore.analyzers\\10.0.0\\microsoft.entityframeworkcore.analyzers.10.0.0.nupkg.sha512",
+    "C:\\Users\\MassTech\\.nuget\\packages\\microsoft.entityframeworkcore.relational\\9.0.6\\microsoft.entityframeworkcore.relational.9.0.6.nupkg.sha512",
+    "C:\\Users\\MassTech\\.nuget\\packages\\microsoft.openapi\\2.0.0\\microsoft.openapi.2.0.0.nupkg.sha512",
+    "C:\\Users\\MassTech\\.nuget\\packages\\oracle.manageddataaccess.core\\23.26.0\\oracle.manageddataaccess.core.23.26.0.nupkg.sha512",
+    "C:\\Users\\MassTech\\.nuget\\packages\\system.configuration.configurationmanager\\8.0.0\\system.configuration.configurationmanager.8.0.0.nupkg.sha512",
+    "C:\\Users\\MassTech\\.nuget\\packages\\system.diagnostics.performancecounter\\8.0.0\\system.diagnostics.performancecounter.8.0.0.nupkg.sha512",
+    "C:\\Users\\MassTech\\.nuget\\packages\\system.directoryservices.protocols\\8.0.2\\system.directoryservices.protocols.8.0.2.nupkg.sha512",
+    "C:\\Users\\MassTech\\.nuget\\packages\\system.security.cryptography.pkcs\\8.0.1\\system.security.cryptography.pkcs.8.0.1.nupkg.sha512",
+    "C:\\Users\\MassTech\\.nuget\\packages\\system.security.cryptography.protecteddata\\8.0.0\\system.security.cryptography.protecteddata.8.0.0.nupkg.sha512"
   ],
   "logs": []
 }

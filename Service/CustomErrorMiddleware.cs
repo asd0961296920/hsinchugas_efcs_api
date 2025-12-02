@@ -26,7 +26,7 @@ namespace hsinchugas_efcs_api.Service
 
             await _next(context);
 
-            if (context.Response.StatusCode == 415)
+            if (context.Response.StatusCode == 415 || context.Response.StatusCode >300)
             {
                 newBody.SetLength(0); // ²MªÅ ProblemDetails
 

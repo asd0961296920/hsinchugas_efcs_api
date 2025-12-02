@@ -66,6 +66,18 @@
         }
       }
     },
+    "/api/efcs/b212": {
+      "get": {
+        "tags": [
+          "Efcs"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/GetWeatherForecast": {
       "get": {
         "tags": [

@@ -43,6 +43,16 @@
   },
   {
     "ContainingType": "hsinchugas_efcs_api.Controllers.EfcsController",
+    "Method": "PostB212",
+    "RelativePath": "api/efcs/b212",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "hsinchugas_efcs_api.Controllers.EfcsController",
     "Method": "PostB219",
     "RelativePath": "api/efcs/b219",
     "HttpMethod": "POST",

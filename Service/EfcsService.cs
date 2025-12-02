@@ -1,7 +1,9 @@
 using hsinchugas_efcs_api.Model;
 using System;
+using System.Runtime.Intrinsics.Arm;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.RegularExpressions;
 
 
 namespace hsinchugas_efcs_api.Service
@@ -64,20 +66,102 @@ namespace hsinchugas_efcs_api.Service
 
 
 
+        public static string ComputeMac(string macdataString, string txnDatetime, string keyHex)
+        {
+            //string txnDatetime = DateTime.Now.ToString("yyyyMMddHHmmss");
+
+            // ˙艼macdataString 竒パ场矗ㄑ= DOCDATA ﹍﹃
+
+            // ˙艼SHA256 篕璶
+            byte[] shaBytes;
+            using (SHA256 sha = SHA256.Create())
+            {
+                shaBytes = sha.ComputeHash(Encoding.UTF8.GetBytes(macdataString));
+            }
+
+            // ˙艼ICV = TXN_DATETIME 干 16 
+            string icvString = txnDatetime.PadRight(16, '0');
+
+            // 3DES CBC IV = 8 Bytes △ 玡 8 じ
+            string iv8 = icvString.Substring(0, 8);
+            byte[] ivBytes = Encoding.ASCII.GetBytes(iv8);
+
+            // ˙艼3DES CBC 盞
+            byte[] keyBytes = HexToBytes(keyHex);
+            byte[] macCode = TripleDESCBCEncrypt(shaBytes, keyBytes, ivBytes);
 
 
+            // ˙艼き程 Block8 Bytes玡 4 Bytes
+            byte[] lastBlock = new byte[8];
+            Array.Copy(macCode, macCode.Length - 8, lastBlock, 0, 8);
 
+            byte[] mac4 = new byte[4];
+            Array.Copy(lastBlock, 0, mac4, 0, 4);
 
-
-
-
-
-
-
-
-
-
-
-
+            // ˙艼せ锣 HEX 糶
+            return BytesToHex(mac4);
         }
+
+        private static byte[] TripleDESCBCEncrypt(byte[] data, byte[] key, byte[] iv)
+        {
+            using (TripleDESCryptoServiceProvider tdes = new TripleDESCryptoServiceProvider())
+            {
+                tdes.Key = key;
+                tdes.IV = iv;
+                tdes.Mode = CipherMode.CBC;
+                tdes.Padding = PaddingMode.None; // eFCS 砏絛ぃ恶
+
+                // 戈ゲ斗琌 8 计 △ 璝ぃ琌璶︽干 0
+                int mod = data.Length % 8;
+                if (mod != 0)
+                {
+                    int pad = 8 - mod;
+                    Array.Resize(ref data, data.Length + pad);
+                }
+
+                using (ICryptoTransform encryptor = tdes.CreateEncryptor())
+                {
+                    return encryptor.TransformFinalBlock(data, 0, data.Length);
+                }
+            }
+        }
+
+        private static byte[] HexToBytes(string hex)
+        {
+            int len = hex.Length;
+            byte[] result = new byte[len / 2];
+            for (int i = 0; i < len; i += 2)
+                result[i / 2] = Convert.ToByte(hex.Substring(i, 2), 16);
+            return result;
+        }
+
+        private static string BytesToHex(byte[] data)
+        {
+            StringBuilder sb = new StringBuilder();
+            foreach (var b in data)
+                sb.AppendFormat("{0:X2}", b);
+            return sb.ToString();
+        }
+
+
+        public decimal TotalAmount(dynamic item)
+        {
+            return
+                (item.GAS_CHARGE ?? 0)
+              + (item.ADDED_TAX ?? 0)
+              + (item.LAMP_RENT ?? 0)
+              + (item.RENT_TAX ?? 0)
+              + (item.BASE_AMT ?? 0)
+              + (item.BASE_TAX ?? 0)
+              + (item.ADJ_CHARGE ?? 0)
+              + (item.ADJ_TAX ?? 0)
+              + (item.PEN_AMT ?? 0)
+              + (item.PEN_TAX ?? 0)
+              + (item.SAFE_AMT ?? 0)
+              + (item.SERVICE_AMT ?? 0)
+              + (item.SERVICE_TAX ?? 0);
+        }
+
+
+    }
 }
