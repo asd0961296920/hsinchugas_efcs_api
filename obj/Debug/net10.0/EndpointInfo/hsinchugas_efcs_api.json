@@ -47,6 +47,26 @@
         "tags": [
           "Efcs"
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ALLOfBillerDataPayRq"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ALLOfBillerDataPayRq"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ALLOfBillerDataPayRq"
+              }
+            }
+          },
+          "required": true
+        },
         "responses": {
           "200": {
             "description": "OK"
@@ -151,6 +171,20 @@
   },
   "components": {
     "schemas": {
+      "ALLOfBillerDataPayRq": {
+        "type": "object",
+        "properties": {
+          "fun": {
+            "$ref": "#/components/schemas/FUN"
+          },
+          "docdata": {
+            "$ref": "#/components/schemas/DOCDATAOfBillerDataPayRq"
+          },
+          "sec": {
+            "$ref": "#/components/schemas/SEC"
+          }
+        }
+      },
       "ALLOfBillerDataQueryRq": {
         "type": "object",
         "properties": {
@@ -162,6 +196,20 @@
           },
           "sec": {
             "$ref": "#/components/schemas/SEC"
+          }
+        }
+      },
+      "BillerDataPayRq": {
+        "type": "object",
+        "properties": {
+          "payhead": {
+            "$ref": "#/components/schemas/PAYHEAD"
+          },
+          "paydetail": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PAYDETAIL"
+            }
           }
         }
       },
@@ -196,6 +244,24 @@
             "type": [
               "null",
               "string"
+            ]
+          }
+        }
+      },
+      "DOCDATAOfBillerDataPayRq": {
+        "type": "object",
+        "properties": {
+          "head": {
+            "$ref": "#/components/schemas/HEAD"
+          },
+          "body": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/BillerDataPayRq"
+              }
             ]
           }
         }
@@ -265,6 +331,91 @@
         }
       },
       "JsonElement": { },
+      "PAYDETAIL": {
+        "type": "object",
+        "properties": {
+          "detailno": {
+            "type": "string"
+          },
+          "outbankid": {
+            "type": "string"
+          },
+          "memberid": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "outaccountnum": {
+            "type": "string"
+          },
+          "txnamount": {
+            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
+            "type": [
+              "number",
+              "string"
+            ],
+            "format": "double"
+          },
+          "paY_DATE": {
+            "type": "string"
+          },
+          "paY_TIME": {
+            "type": "string"
+          },
+          "paY_CLRDATE": {
+            "type": "string"
+          },
+          "checktype": {
+            "type": "string"
+          },
+          "billtype": {
+            "type": "string"
+          },
+          "billdata": {
+            "type": "string"
+          },
+          "billbatch": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "efcsseqno": {
+            "type": "string"
+          },
+          "einV_CARDNO": {
+            "type": "string"
+          }
+        }
+      },
+      "PAYHEAD": {
+        "type": "object",
+        "properties": {
+          "registertoken": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "totaL_COUNT": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "totaL_AMOUNT": {
+            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
+            "type": [
+              "number",
+              "string"
+            ],
+            "format": "double"
+          }
+        }
+      },
       "SEC": {
         "type": "object",
         "properties": {

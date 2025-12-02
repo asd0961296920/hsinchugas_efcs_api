@@ -1,6 +1,7 @@
 using Dapper;
 using hsinchugas_efcs_api.Model;
 using hsinchugas_efcs_api.Service;
+using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 using static System.Runtime.InteropServices.JavaScript.JSType;
@@ -96,17 +97,44 @@ namespace hsinchugas_efcs_api.Controllers
             data.SEC.DIG = EfcsService.GenerateDIG(JsonSerializer.Serialize(data));
             data.SEC.MAC = EfcsService.ComputeMac(JsonSerializer.Serialize(data), txnDatetime, _config["HEAD:MAC_KEY"]);
 
+
+
+            EfcsService.EFCS_LOG(_db, JsonSerializer.Serialize(request), JsonSerializer.Serialize(data),"B207", Request.GetDisplayUrl(),"200");
             return Ok(data);
         }
 
         [HttpPost("api/efcs/b208")]
-        public async Task<IActionResult> PostB208()
+        public async Task<IActionResult> PostB208([FromBody] ALL<BillerDataPayRq> request)
         {
-            var data = new
+
+            var check = Verify.CheckCommon(request);
+            if (check != null) return Ok(check);
+
+
+
+            var data = new ALL<BillerDataPayRs>()
             {
-                msg = "ok"
+                FUN = request.FUN,
+                DOCDATA = new DOCDATA<BillerDataPayRs>()
+                {
+                    HEAD = request.DOCDATA.HEAD,
+                    BODY = new BillerDataPayRs()  // ★ 你要 new 起來，不然 BODY 也是 null
+                },
+                SEC = new SEC()
             };
+
+
+
+
+
+
+
+
+
+
             return Ok(data);
+
+
         }
 
         [HttpPost("api/efcs/b219")]

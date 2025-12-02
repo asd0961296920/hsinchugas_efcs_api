@@ -4,6 +4,7 @@ using System.Runtime.Intrinsics.Arm;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
+using Dapper;
 
 
 namespace hsinchugas_efcs_api.Service
@@ -162,6 +163,27 @@ namespace hsinchugas_efcs_api.Service
               + (item.SERVICE_TAX ?? 0);
         }
 
+        public static async void  EFCS_LOG(OracleDbContext db,string Log,string return_log,string rmark,string url,string code)
+        {
+            using var conn = db.CreateConnection();
+            string sql = @"
+INSERT INTO EFCS_LOG 
+    (Add_Date, Json_Log, url, rmark, return_code,Return_Log)
+VALUES 
+    (:Add_Date, :Json_Log, :url, :rmark, :return_code, :Return_Log)";
 
-    }
+            await conn.ExecuteAsync(sql, new
+            {
+                Add_Date = DateTime.Now,
+                Json_Log = Log,
+                url = url,
+                rmark = rmark,
+                return_code = code,
+                Return_Log = return_log
+            });
+
+        }
+
+
+     }
 }
