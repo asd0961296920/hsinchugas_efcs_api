@@ -140,7 +140,7 @@ namespace hsinchugas_efcs_api.Model
     {
         /// <summary>跨系統介接戳記 (字串36)</summary>
         [JsonPropertyOrder(1)]
-        public string REGISTERTOKEN { get; set; }
+        public string? REGISTERTOKEN { get; set; }
 
         /// <summary>總筆數 (數字2)</summary>
         [JsonPropertyOrder(2)]
@@ -167,7 +167,7 @@ namespace hsinchugas_efcs_api.Model
 
         /// <summary>銷帳資料所屬期別 字串10</summary>
         [JsonPropertyOrder(4)]
-        public string BILLBATCH { get; set; }
+        public string? BILLBATCH { get; set; }
 
         /// <summary>處理結果代碼 (原值帶回)</summary>
         [JsonPropertyOrder(5)]
@@ -175,7 +175,7 @@ namespace hsinchugas_efcs_api.Model
 
         /// <summary>處理描述（錯誤訊息或業者描述）</summary>
         [JsonPropertyOrder(6)]
-        public string ERRORDESC { get; set; }
+        public string? ERRORDESC { get; set; }
 
         /// <summary>結果參數數目 數字1</summary>
         [JsonPropertyOrder(7)]
@@ -183,43 +183,43 @@ namespace hsinchugas_efcs_api.Model
 
         /// <summary>繳費結果名稱1 字串20</summary>
         [JsonPropertyOrder(8)]
-        public string PAY_DISPNAME1 { get; set; }
+        public string? PAY_DISPNAME1 { get; set; }
 
         /// <summary>繳費結果值1 字串120</summary>
         [JsonPropertyOrder(9)]
-        public string PAY_DISPDATA1 { get; set; }
+        public string? PAY_DISPDATA1 { get; set; }
 
         /// <summary>繳費結果名稱2 字串20</summary>
         [JsonPropertyOrder(10)]
-        public string PAY_DISPNAME2 { get; set; }
+        public string? PAY_DISPNAME2 { get; set; }
 
         /// <summary>繳費結果值2 字串120</summary>
         [JsonPropertyOrder(11)]
-        public string PAY_DISPDATA2 { get; set; }
+        public string? PAY_DISPDATA2 { get; set; }
 
         /// <summary>繳費結果名稱3 字串20</summary>
         [JsonPropertyOrder(12)]
-        public string PAY_DISPNAME3 { get; set; }
+        public string? PAY_DISPNAME3 { get; set; }
 
         /// <summary>繳費結果值3 字串120</summary>
         [JsonPropertyOrder(13)]
-        public string PAY_DISPDATA3 { get; set; }
+        public string? PAY_DISPDATA3 { get; set; }
 
         /// <summary>繳費結果名稱4 字串20</summary>
         [JsonPropertyOrder(14)]
-        public string PAY_DISPNAME4 { get; set; }
+        public string? PAY_DISPNAME4 { get; set; }
 
         /// <summary>繳費結果值4 字串120</summary>
         [JsonPropertyOrder(15)]
-        public string PAY_DISPDATA4 { get; set; }
+        public string? PAY_DISPDATA4 { get; set; }
 
         /// <summary>繳費結果名稱5 字串20</summary>
         [JsonPropertyOrder(16)]
-        public string PAY_DISPNAME5 { get; set; }
+        public string? PAY_DISPNAME5 { get; set; }
 
         /// <summary>繳費結果值5 字串120</summary>
         [JsonPropertyOrder(17)]
-        public string PAY_DISPDATA5 { get; set; }
+        public string? PAY_DISPDATA5 { get; set; }
     }
 
 

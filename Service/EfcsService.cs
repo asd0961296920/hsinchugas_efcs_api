@@ -1,10 +1,11 @@
+using Dapper;
 using hsinchugas_efcs_api.Model;
 using System;
+using System.Globalization;
 using System.Runtime.Intrinsics.Arm;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
-using Dapper;
 
 
 namespace hsinchugas_efcs_api.Service
@@ -142,6 +143,34 @@ namespace hsinchugas_efcs_api.Service
             foreach (var b in data)
                 sb.AppendFormat("{0:X2}", b);
             return sb.ToString();
+        }
+
+
+        public BillDecodeResult DecodeBillData(string billdata)
+        {
+            if (string.IsNullOrWhiteSpace(billdata))
+                throw new ArgumentException("BILLDATA 不可為空");
+
+            if (billdata.Length < 19) // 7 + 7 + 至少 5
+                throw new ArgumentException("BILLDATA 長度不符格式");
+
+            // 固定長度切割
+            string custNo = billdata.Substring(0, 7);  // CUST_NO(7)
+            string rcyYmd = billdata.Substring(7, 7);  // RCY_YMD(7)
+            string receiptNo = billdata.Substring(14); // 剩下全部（RECEIPT_NO 5–6）
+
+            return new BillDecodeResult
+            {
+                CUST_NO = custNo,
+                RCY_YMD = rcyYmd,
+                RECEIPT_NO = receiptNo
+            };
+        }
+        public static string GetTaiwanDate()
+        {
+            TaiwanCalendar tc = new TaiwanCalendar();
+            DateTime now = DateTime.Now;
+            return $"{tc.GetYear(now)}{now:MMdd}";
         }
 
 
