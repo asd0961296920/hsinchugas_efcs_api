@@ -79,6 +79,26 @@
         "tags": [
           "Efcs"
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ALLOfBillerQueryNotifyMsgRq"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ALLOfBillerQueryNotifyMsgRq"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ALLOfBillerQueryNotifyMsgRq"
+              }
+            }
+          },
+          "required": true
+        },
         "responses": {
           "200": {
             "description": "OK"
@@ -199,6 +219,20 @@
           }
         }
       },
+      "ALLOfBillerQueryNotifyMsgRq": {
+        "type": "object",
+        "properties": {
+          "fun": {
+            "$ref": "#/components/schemas/FUN"
+          },
+          "docdata": {
+            "$ref": "#/components/schemas/DOCDATAOfBillerQueryNotifyMsgRq"
+          },
+          "sec": {
+            "$ref": "#/components/schemas/SEC"
+          }
+        }
+      },
       "BillerDataPayRq": {
         "type": "object",
         "properties": {
@@ -248,6 +282,17 @@
           }
         }
       },
+      "BillerQueryNotifyMsgRq": {
+        "type": "object",
+        "properties": {
+          "queryhead": {
+            "$ref": "#/components/schemas/QUERYHEAD_B219"
+          },
+          "querydetail": {
+            "$ref": "#/components/schemas/QUERYDETAIL_B219"
+          }
+        }
+      },
       "DOCDATAOfBillerDataPayRq": {
         "type": "object",
         "properties": {
@@ -279,6 +324,24 @@
               },
               {
                 "$ref": "#/components/schemas/BillerDataQueryRq"
+              }
+            ]
+          }
+        }
+      },
+      "DOCDATAOfBillerQueryNotifyMsgRq": {
+        "type": "object",
+        "properties": {
+          "head": {
+            "$ref": "#/components/schemas/HEAD"
+          },
+          "body": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/BillerQueryNotifyMsgRq"
               }
             ]
           }
@@ -413,6 +476,45 @@
               "string"
             ],
             "format": "double"
+          }
+        }
+      },
+      "QUERYDETAIL_B219": {
+        "type": "object",
+        "properties": {
+          "detailno": {
+            "type": "string"
+          },
+          "querY_TYPE": {
+            "type": "string"
+          },
+          "querY_DATA1": {
+            "type": "string"
+          },
+          "querY_DATA2": {
+            "type": "string"
+          },
+          "querY_DATA3": {
+            "type": "string"
+          },
+          "querY_DATA4": {
+            "type": "string"
+          },
+          "querY_DATA5": {
+            "type": "string"
+          }
+        }
+      },
+      "QUERYHEAD_B219": {
+        "type": "object",
+        "properties": {
+          "totaL_COUNT": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
           }
         }
       },

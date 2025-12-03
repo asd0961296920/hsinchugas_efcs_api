@@ -64,7 +64,13 @@
     "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
-    "Parameters": [],
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "hsinchugas_efcs_api.Model.ALL\u00601[[hsinchugas_efcs_api.Model.BillerQueryNotifyMsgRq, hsinchugas_efcs_api, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "IsRequired": true
+      }
+    ],
     "ReturnTypes": []
   },
   {
