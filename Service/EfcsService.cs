@@ -156,14 +156,14 @@ namespace hsinchugas_efcs_api.Service
 
             // 固定長度切割
             string custNo = billdata.Substring(0, 7);  // CUST_NO(7)
-            string rcyYmd = billdata.Substring(7, 7);  // RCY_YMD(7)
+            string rcyYmd = billdata.Substring(7, 7);  // RCV_YMD(7)
             string receiptNo = billdata.Substring(14); // 剩下全部（RECEIPT_NO 5–6）
 
             return new BillDecodeResult
             {
                 CUST_NO = custNo,
-                RCY_YMD = rcyYmd,
-                RECEIPT_NO = receiptNo
+                RCV_YMD = rcyYmd,
+                RECEPT_NO = receiptNo
             };
         }
         public static string GetTaiwanDate()

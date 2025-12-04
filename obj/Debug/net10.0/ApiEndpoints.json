@@ -74,6 +74,48 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "hsinchugas_efcs_api.Controllers.MISController",
+    "Method": "mis_config_get",
+    "RelativePath": "api/mis/config/get",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "hsinchugas_efcs_api.Controllers.MISController",
+    "Method": "mis_config_upd_B212",
+    "RelativePath": "api/mis/config/upd_212",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "hsinchugas_efcs_api.Model.EfcsConfig",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "hsinchugas_efcs_api.Controllers.MISController",
+    "Method": "mis_config_upd_B219",
+    "RelativePath": "api/mis/config/upd_219",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "hsinchugas_efcs_api.Model.EfcsConfig",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "hsinchugas_efcs_api.Controllers.WeatherForecastController",
     "Method": "Get",
     "RelativePath": "GetWeatherForecast",

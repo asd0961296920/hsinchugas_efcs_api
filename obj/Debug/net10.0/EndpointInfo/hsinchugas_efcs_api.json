@@ -118,6 +118,82 @@
         }
       }
     },
+    "/api/mis/config/get": {
+      "get": {
+        "tags": [
+          "MIS"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/mis/config/upd_212": {
+      "post": {
+        "tags": [
+          "MIS"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EfcsConfig"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EfcsConfig"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/EfcsConfig"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/mis/config/upd_219": {
+      "post": {
+        "tags": [
+          "MIS"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EfcsConfig"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EfcsConfig"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/EfcsConfig"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/GetWeatherForecast": {
       "get": {
         "tags": [
@@ -239,7 +315,7 @@
           "payhead": {
             "$ref": "#/components/schemas/PAYHEAD"
           },
-          "paydetail": {
+          "paydeatil": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/PAYDETAIL"
@@ -343,6 +419,67 @@
               {
                 "$ref": "#/components/schemas/BillerQueryNotifyMsgRq"
               }
+            ]
+          }
+        }
+      },
+      "EfcsConfig": {
+        "type": "object",
+        "properties": {
+          "b219_Y_NEXT_TIME": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "null",
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "b219_N_NEXT_TIME": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "null",
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "b219_TEXT": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "b212_NOTIFY": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "b212_TEXT": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "b212_START": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "b212_END": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "b212_URL": {
+            "type": [
+              "null",
+              "string"
             ]
           }
         }
@@ -565,6 +702,9 @@
   "tags": [
     {
       "name": "Efcs"
+    },
+    {
+      "name": "MIS"
     },
     {
       "name": "WeatherForecast"
