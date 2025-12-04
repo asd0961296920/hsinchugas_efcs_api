@@ -28,82 +28,155 @@ namespace hsinchugas_efcs_api.Controllers
         [HttpPost("api/efcs/b207")]
         public async Task<IActionResult> PostB207([FromBody] ALL<BillerDataQueryRq> request)
         {
-            var check = Verify.CheckCommon(request);
-            if (check != null) return Ok(check);
-
-
-            var data = new ALL<BillerDataQueryRs>()
+            try
             {
-                FUN = request.FUN,
-                DOCDATA = new DOCDATA<BillerDataQueryRs>()
+                var EfcsService = new EfcsService(_config);
+                EfcsService.EFCS_LOG(_db, JsonSerializer.Serialize(request), "", "B207輸入", Request.GetDisplayUrl(), "200");
+                var check = Verify.CheckCommon(request);
+                if (check != null) return Ok(check);
+
+
+                var data = new ALL<BillerDataQueryRs>()
                 {
-                    HEAD = request.DOCDATA.HEAD,
-                    BODY = new BillerDataQueryRs()  // ★ 你要 new 起來，不然 BODY 也是 null
-                },
-                SEC = new SEC()
-            };
-            var EfcsService = new EfcsService(_config);
-            var txnDatetime = DateTime.Now.ToString("yyyyMMddHHmmss");
+                    FUN = request.FUN,
+                    DOCDATA = new DOCDATA<BillerDataQueryRs>()
+                    {
+                        HEAD = request.DOCDATA.HEAD,
+                        BODY = new BillerDataQueryRs()  // ★ 你要 new 起來，不然 BODY 也是 null
+                    },
+                    SEC = new SEC()
+                };
 
-            data.DOCDATA.HEAD.TXN_DATETIME = txnDatetime;
-            var BillerDataQueryRs = new BillerDataQueryRs();
-            var QUERYHEAD = new QUERYHEAD();
-            var QUERYDETAIL = new List<QUERYDETAIL>();
+                var txnDatetime = DateTime.Now.ToString("yyyyMMddHHmmss");
+
+                data.DOCDATA.HEAD.TXN_DATETIME = txnDatetime;
+                var BillerDataQueryRs = new BillerDataQueryRs();
+                var QUERYHEAD = new QUERYHEAD();
+                var QUERYDETAIL = new List<QUERYDETAIL>();
 
 
-            //查詢邏輯
+                //查詢邏輯
 
-            if (request.DOCDATA.BODY.QUERY_TYPE == "1")
-            {
-                using var conn = _db.CreateConnection();
-                string sql = "SELECT * FROM RCPM005 WHERE CUST_NO = :QUERY_DATA1 AND (CLEAR_DT is NULL OR CLEAR_DT = 0)";
-                var RCPM005 =  await conn.QueryAsync(sql, new { QUERY_DATA1 = request.DOCDATA.BODY.QUERY_DATA1 });
-                int number = 0;
-                int TOTAL_COUNT = 0;
-                foreach ( var item in RCPM005)
+                if (request.DOCDATA.BODY.QUERY_TYPE == "1")
                 {
-                    number++;
-                    string QUERY_DETAILNO = "";
-                    if (number < 10)
+                    using var conn = _db.CreateConnection();
+                    string sql = "SELECT * FROM RCPM005 WHERE CUST_NO = :QUERY_DATA1 AND (CLEAR_DT is NULL OR CLEAR_DT = 0)";
+                    var RCPM005 =  await conn.QueryAsync(sql, new { QUERY_DATA1 = request.DOCDATA.BODY.QUERY_DATA1 });
+                    int number = 0;
+                    int TOTAL_COUNT = 0;
+                    foreach ( var item in RCPM005)
                     {
-                        QUERY_DETAILNO = "0" + number.ToString();
-                    }
-                    else
-                    {
-                         QUERY_DETAILNO = number.ToString();
-                    }
-
-                        QUERYDETAIL.Add(new QUERYDETAIL
+                        number++;
+                        string QUERY_DETAILNO = "";
+                        if (number < 10)
                         {
-                            QUERY_DETAILNO = QUERY_DETAILNO, 
-                            QUERY_ISPAY = "Y",
-                            QUERY_BILLTYPE = "B",
-                            QUERY_BILLDATA = item.CUST_NO.ToString() + item.RCV_YMD.ToString() + item.RECEPT_NO.ToString(), //CUST_NO + RCV_YMD + RECEPT_NO
-                            QUERY_AMOUNT = EfcsService.TotalAmount(item), //總金額
-                            QUERY_DATE = "99999999", //繳費日期，無期限為99999999
-                            QUERY_DATA_NO = 1,
-                            QUERY_DISPNAME1 = "用戶號碼",
-                            QUERY_DISPDATA1 = item.CUST_NO
-                        });
-                    TOTAL_COUNT += EfcsService.TotalAmount(item);
+                            QUERY_DETAILNO = "0" + number.ToString();
+                        }
+                        else
+                        {
+                             QUERY_DETAILNO = number.ToString();
+                        }
+
+                            QUERYDETAIL.Add(new QUERYDETAIL
+                            {
+                                QUERY_DETAILNO = QUERY_DETAILNO, 
+                                QUERY_ISPAY = "Y",
+                                QUERY_BILLTYPE = "B",
+                                QUERY_BILLDATA = item.CUST_NO.ToString() + item.RCV_YMD.ToString() + item.RECEPT_NO.ToString(), //CUST_NO + RCV_YMD + RECEPT_NO
+                                QUERY_AMOUNT = EfcsService.TotalAmount(item), //總金額
+                                QUERY_DATE = "99999999", //繳費日期，無期限為99999999
+                                QUERY_DATA_NO = 1,
+                                QUERY_DISPNAME1 = "用戶號碼",
+                                QUERY_DISPDATA1 = item.CUST_NO
+                            });
+                        TOTAL_COUNT += EfcsService.TotalAmount(item);
+                    }
+                    QUERYHEAD.TOTAL_AMOUNT = number;
+                    QUERYHEAD.TOTAL_COUNT = TOTAL_COUNT;
+
+                    data.DOCDATA.BODY.QUERYDETAIL = QUERYDETAIL;
+                    data.DOCDATA.BODY.QUERYHEAD = QUERYHEAD;
                 }
-                QUERYHEAD.TOTAL_AMOUNT = number;
-                QUERYHEAD.TOTAL_COUNT = TOTAL_COUNT;
 
-                data.DOCDATA.BODY.QUERYDETAIL = QUERYDETAIL;
-                data.DOCDATA.BODY.QUERYHEAD = QUERYHEAD;
+                if (request.DOCDATA.BODY.QUERY_TYPE == "2")
+                {
+                    using var conn = _db.CreateConnection();
+
+                    string sq2 = "SELECT * FROM RCPM001 WHERE NAME = :QUERY_DATA2";
+                    var RCPM001 = await conn.QueryFirstOrDefaultAsync(sq2, new { QUERY_DATA2 = request.DOCDATA.BODY.QUERY_DATA2 });
+
+
+
+                    if (RCPM001 != null)
+                    {
+
+
+                        string sql = "SELECT * FROM RCPM005 WHERE CUST_NO = :QUERY_DATA1 AND (CLEAR_DT is NULL OR CLEAR_DT = 0)";
+                        var RCPM005 = await conn.QueryAsync(sql, new { QUERY_DATA1 = RCPM001.CUST_NO });
+                        int number = 0;
+                        int TOTAL_COUNT = 0;
+                        foreach (var item in RCPM005)
+                        {
+                            number++;
+                            string QUERY_DETAILNO = "";
+                            if (number < 10)
+                            {
+                                QUERY_DETAILNO = "0" + number.ToString();
+                            }
+                            else
+                            {
+                                QUERY_DETAILNO = number.ToString();
+                            }
+
+                            QUERYDETAIL.Add(new QUERYDETAIL
+                            {
+                                QUERY_DETAILNO = QUERY_DETAILNO,
+                                QUERY_ISPAY = "Y",
+                                QUERY_BILLTYPE = "B",
+                                QUERY_BILLDATA = item.CUST_NO.ToString() + item.RCV_YMD.ToString() + item.RECEPT_NO.ToString(), //CUST_NO + RCV_YMD + RECEPT_NO
+                                QUERY_AMOUNT = EfcsService.TotalAmount(item), //總金額
+                                QUERY_DATE = "99999999", //繳費日期，無期限為99999999
+                                QUERY_DATA_NO = 1,
+                                QUERY_DISPNAME1 = "用戶號碼",
+                                QUERY_DISPDATA1 = item.CUST_NO
+                            });
+                            TOTAL_COUNT += EfcsService.TotalAmount(item);
+                        }
+                        QUERYHEAD.TOTAL_AMOUNT = number;
+                        QUERYHEAD.TOTAL_COUNT = TOTAL_COUNT;
+
+                        data.DOCDATA.BODY.QUERYDETAIL = QUERYDETAIL;
+                        data.DOCDATA.BODY.QUERYHEAD = QUERYHEAD;
+                    }
+
+                }
+
+                    data.DOCDATA.HEAD.ICCHK_CODE = "0000";
+                data.DOCDATA.HEAD.ICCHK_CODE_DESC = "請求成功";
+                data.SEC.DIG = EfcsService.GenerateDIG(JsonSerializer.Serialize(data));
+                data.SEC.MAC = EfcsService.ComputeMac(JsonSerializer.Serialize(data), txnDatetime, _config["HEAD:MAC_KEY"]);
+
+
+                EfcsService.EFCS_LOG(_db, JsonSerializer.Serialize(request), JsonSerializer.Serialize(data),"B207輸出", Request.GetDisplayUrl(),"200");
+                return Ok(data);
+
             }
-
-
-
-            data.DOCDATA.HEAD.ICCHK_CODE = "0000";
-            data.DOCDATA.HEAD.ICCHK_CODE_DESC = "請求成功";
-            data.SEC.DIG = EfcsService.GenerateDIG(JsonSerializer.Serialize(data));
-            data.SEC.MAC = EfcsService.ComputeMac(JsonSerializer.Serialize(data), txnDatetime, _config["HEAD:MAC_KEY"]);
-
-
-            EfcsService.EFCS_LOG(_db, JsonSerializer.Serialize(request), JsonSerializer.Serialize(data),"B207", Request.GetDisplayUrl(),"200");
-            return Ok(data);
+            catch (Exception ex)
+            {
+                // 一旦進 catch → 立刻終了，不會繼續往下跑
+                var error = new
+                {
+                    DOCDATA = new
+                    {
+                        HEAD = new
+                        {
+                            ICCHK_CODE = "S999",
+                            ICCHK_CODE_DESC = ex.Message
+                        }
+                    }
+                };
+                return Ok(error);
+            }
         }
         #endregion b207
 
@@ -114,6 +187,8 @@ namespace hsinchugas_efcs_api.Controllers
 
             try
             {
+                var EfcsService = new EfcsService(_config);
+                EfcsService.EFCS_LOG(_db, JsonSerializer.Serialize(request), "", "B208輸入", Request.GetDisplayUrl(), "200");
                 var check = Verify.CheckCommon(request);
                 if (check != null) return Ok(check);
 
@@ -129,7 +204,6 @@ namespace hsinchugas_efcs_api.Controllers
                     },
                     SEC = new SEC()
                 };
-                var EfcsService = new EfcsService(_config);
                 var txnDatetime = DateTime.Now.ToString("yyyyMMddHHmmss");
 
                 data.DOCDATA.HEAD.TXN_DATETIME = txnDatetime;
@@ -145,10 +219,14 @@ namespace hsinchugas_efcs_api.Controllers
                 {
                 
                     var key = EfcsService.DecodeBillData(item.BILLDATA);
-                    string sql3 = "SELECT * FROM RCPM005 WHERE CUST_NO = :CUST_NO";
+                    string sql3 = "SELECT * FROM RCPM005 WHERE CUST_NO = :CUST_NO AND RCV_YMD = :RCV_YMD AND RECEPT_NO = :RECEPT_NO";
                     var RCPM005_SELECT = await conn.QueryFirstOrDefaultAsync(
                         sql3,
-                        new { CUST_NO = key.CUST_NO }   // ← 這裡放入你的變數
+                        new {
+                        CUST_NO = key.CUST_NO,
+                        RCV_YMD = key.RCV_YMD,
+                        RECEPT_NO = key.RECEPT_NO,
+                        }   // ← 這裡放入你的變數
                     );
 
                     if (RCPM005_SELECT != null)
@@ -265,7 +343,7 @@ namespace hsinchugas_efcs_api.Controllers
                 data.DOCDATA.HEAD.ICCHK_CODE_DESC = "請求成功";
                 data.SEC.DIG = EfcsService.GenerateDIG(JsonSerializer.Serialize(data));
                 data.SEC.MAC = EfcsService.ComputeMac(JsonSerializer.Serialize(data), txnDatetime, _config["HEAD:MAC_KEY"]);
-                EfcsService.EFCS_LOG(_db, JsonSerializer.Serialize(request), JsonSerializer.Serialize(data), "B208", Request.GetDisplayUrl(), "200");
+                EfcsService.EFCS_LOG(_db, JsonSerializer.Serialize(request), JsonSerializer.Serialize(data), "B208輸出", Request.GetDisplayUrl(), "200");
                 return Ok(data);
                
             }catch (Exception ex)

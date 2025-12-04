@@ -156,8 +156,8 @@ namespace hsinchugas_efcs_api.Service
 
             // ©T©wªø«×¤Á³Î
             string custNo = billdata.Substring(0, 7);  // CUST_NO(7)
-            string rcyYmd = billdata.Substring(7, 7);  // RCV_YMD(7)
-            string receiptNo = billdata.Substring(14); // ³Ñ¤U¥þ³¡¡]RECEIPT_NO 5¡V6¡^
+            string rcyYmd = billdata.Substring(7, 6);  // RCV_YMD(7)
+            string receiptNo = billdata.Substring(13); // ³Ñ¤U¥þ³¡¡]RECEIPT_NO 5¡V6¡^
 
             return new BillDecodeResult
             {
