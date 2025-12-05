@@ -305,7 +305,7 @@ namespace hsinchugas_efcs_api.Controllers
                             EINV_CARDNO = item.EINV_CARDNO,
                             CLEAR_DT = DateTime.Now,
                         });
-
+                        /*
                         string sql2 = @"UPDATE RCPM005 SET  CLEAR_DT = :DATA WHERE CUST_NO = :CUST_NO AND RCV_YMD = :RCV_YMD AND RECEPT_NO = :RECEPT_NO";
 
                         await conn.ExecuteAsync(sql2, new
@@ -315,7 +315,7 @@ namespace hsinchugas_efcs_api.Controllers
                             RECEPT_NO = key.RECEPT_NO,
                             DATA = EfcsService.GetTaiwanDate()
                         });
-
+                        */
 
 
                         PAYDETAIL_RS.Add(new PAYDETAIL_RS
@@ -324,7 +324,7 @@ namespace hsinchugas_efcs_api.Controllers
                             TXNAMOUNT = item.TXNAMOUNT,    // 繳費金額
                             BILLDATA = item.BILLDATA,   // 銷帳資料 (50)
                             BILLBATCH = item.BILLBATCH,   // 所屬期別 (10)
-                            APRTN_CODE = "200",   // 處理結果代碼
+                            APRTN_CODE = "0000",   // 處理結果代碼
                             ERRORDESC = null,   // 錯誤敘述
                             PAY_DATA_NO = 1,    // 結果參數數目 (1 digit)
 

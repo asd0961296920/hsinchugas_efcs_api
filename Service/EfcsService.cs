@@ -183,13 +183,7 @@ namespace hsinchugas_efcs_api.Service
               + (item.RENT_TAX ?? 0)
               + (item.BASE_AMT ?? 0)
               + (item.BASE_TAX ?? 0)
-              + (item.ADJ_CHARGE ?? 0)
-              + (item.ADJ_TAX ?? 0)
-              + (item.PEN_AMT ?? 0)
-              + (item.PEN_TAX ?? 0)
-              + (item.SAFE_AMT ?? 0)
-              + (item.SERVICE_AMT ?? 0)
-              + (item.SERVICE_TAX ?? 0);
+              + (item.ADJ_CHARGE ?? 0);
         }
 
         public static async void  EFCS_LOG(OracleDbContext db,string Log,string return_log,string rmark,string url,string code)
