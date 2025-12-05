@@ -64,7 +64,7 @@ namespace hsinchugas_efcs_api.Controllers
                 if (request.DOCDATA.BODY.QUERY_TYPE == "1" || request.DOCDATA.BODY.QUERY_TYPE == "2")
                 {
                     using var conn = _db.CreateConnection();
-                    string sql = "SELECT * FROM RCPM005 WHERE CUST_NO = :QUERY_DATA1 AND (CLEAR_DT is NULL OR CLEAR_DT = 0)";
+                    string sql = "SELECT * FROM RCPM005 WHERE CUST_NO = :QUERY_DATA1 AND (FILE_DATE is NULL OR FILE_DATE = 0)";
                     var RCPM005 =  await conn.QueryAsync(sql, new { QUERY_DATA1 = request.DOCDATA.BODY.QUERY_DATA1 });
                     int number = 0;
                     int TOTAL_COUNT = 0;
@@ -404,7 +404,7 @@ namespace hsinchugas_efcs_api.Controllers
                 if (request.DOCDATA.BODY.QUERYDETAIL.QUERY_TYPE == "1" || request.DOCDATA.BODY.QUERYDETAIL.QUERY_TYPE == "2")
                 {
                     using var conn = _db.CreateConnection();
-                    string sql = "SELECT * FROM RCPM005 WHERE CUST_NO = :QUERY_DATA1 AND (CLEAR_DT is NULL OR CLEAR_DT = 0)";
+                    string sql = "SELECT * FROM RCPM005 WHERE CUST_NO = :QUERY_DATA1 AND (FILE_DATE is NULL OR FILE_DATE = 0)";
                     var RCPM005 = await conn.QueryAsync(sql, new { QUERY_DATA1 = request.DOCDATA.BODY.QUERYDETAIL.QUERY_DATA1 });
                     string sql2 = "SELECT * FROM EFCS_CONFIG";
                     var config = await conn.QueryFirstOrDefaultAsync(sql2);
