@@ -53,12 +53,12 @@ namespace hsinchugas_efcs_api.Service
 
             B212HEAD.TXN_DATETIME = DateTime.Now.ToString("yyyyMMddHHmmss");
             B212HEAD.TXN_NO = "EFCS" +DateTime.Now.ToString("yyyyMMddHHmmss");
-            B212HEAD.PRS_CODE = "B207";
+            B212HEAD.PRS_CODE = "B212";
 
             B212HEAD.BILLER_ID = _config["HEAD:BILLER_ID"];
 
             B212HEAD.BTYPECLASS = "0706";
-            B212HEAD.ICCHK_CODE = "0000";
+            B212HEAD.ICCHK_CODE = "9999";
             B212HEAD.ICCHK_CODE_DESC = "жие\";
             return B212HEAD;
         }

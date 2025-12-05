@@ -64,5 +64,48 @@ namespace hsinchugas_efcs_api.Service
 
 
 
+        public static object? ValidateB207(BillerDataQueryRq body)
+        {
+            // ---- 必填欄位檢核 ----
+            if (string.IsNullOrWhiteSpace(body.QUERY_TYPE))
+                return Error("I300", "查詢條件型態不得為空");
+
+            if (string.IsNullOrWhiteSpace(body.QUERY_DATA1))
+                return Error("I301", "查詢條件參數 1 不得為空");
+
+            // ---- 長度檢核（規格：字串長度不能超過定義） ----
+            if (body.QUERY_TYPE?.Length > 1)
+                return Error("I300", "查詢條件型態長度不符（需為 1）");
+
+            if (body.QUERY_DATA1?.Length > 20)
+                return Error("I301", "查詢條件參數 1 長度不可超過 20");
+
+            if (body.QUERY_DATA2?.Length > 20)
+                return Error("I302", "查詢條件參數 2 長度不可超過 20");
+
+            if (body.QUERY_DATA3?.Length > 20)
+                return Error("I303", "查詢條件參數 3 長度不可超過 20");
+
+            if (body.QUERY_DATA4?.Length > 20)
+                return Error("I304", "查詢條件參數 4 長度不可超過 20");
+
+            if (body.QUERY_DATA5?.Length > 20)
+                return Error("I305", "查詢條件參數 5 長度不可超過 20");
+
+            // 通過檢核
+            return null;
+        }
+
+
+
+
+
+
+
+
+
+
+
+
     }
 }
