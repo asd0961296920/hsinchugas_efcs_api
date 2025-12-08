@@ -3,6 +3,7 @@ using hsinchugas_efcs_api.Model;
 using hsinchugas_efcs_api.Service;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.Data.SqlTypes;
 using System.Net.Http;
 using System.Text;
@@ -86,7 +87,7 @@ namespace hsinchugas_efcs_api.Controllers
                                 QUERY_DETAILNO = QUERY_DETAILNO, 
                                 QUERY_ISPAY = "Y",
                                 QUERY_BILLTYPE = "B",
-                                QUERY_BILLDATA = item.CUST_NO.ToString() + item.RCV_YMD.ToString() + item.RECEPT_NO.ToString(), //CUST_NO + RCV_YMD + RECEPT_NO
+                                QUERY_BILLDATA = item.CUST_NO.ToString() + item.RECEPT_NO.ToString(), //CUST_NO + RECEPT_NO
                                 QUERY_AMOUNT = EfcsService.TotalAmount(item), //總金額
                                 QUERY_DATE = "99999999", //繳費日期，無期限為99999999
                                 QUERY_DATA_NO = 1,
@@ -221,33 +222,45 @@ namespace hsinchugas_efcs_api.Controllers
 
                 foreach (var item in request.DOCDATA.BODY.PAYDEATIL)
                 {
-                
-                    var key = EfcsService.DecodeBillData(item.BILLDATA);
-                    string sql3 = "SELECT * FROM RCPM005 WHERE CUST_NO = :CUST_NO AND RCV_YMD = :RCV_YMD AND RECEPT_NO = :RECEPT_NO";
+                    var key = EfcsService.DecodeBillData2(item.BILLDATA);
+                    string sql3 = "SELECT * FROM RCPM005 WHERE RECEPT_NO = :RECEPT_NO AND CUST_NO = :CUST_NO ";
                     var RCPM005_SELECT = await conn.QueryFirstOrDefaultAsync(
                         sql3,
                         new {
-                        CUST_NO = key.CUST_NO,
-                        RCV_YMD = key.RCV_YMD,
-                        RECEPT_NO = key.RECEPT_NO,
+                            RECEPT_NO = key.RECEPT_NO,
+                            CUST_NO = key.CUST_NO
                         }   // ← 這裡放入你的變數
                     );
-
+                    
                     if (RCPM005_SELECT != null)
                     {
-                        number++;
-                        string DETAILNO = "";
-
-                        if (number < 10)
+                        if(EfcsService.GetCARRIERIDDate(item.EINV_CARDNO) != null)
                         {
-                            DETAILNO = "0" + number.ToString();
-                        }
-                        else
-                        {
-                            DETAILNO = number.ToString();
+                            string sql2 = @"UPDATE RCPM005 SET  CARRIERID = :DATA WHERE  RECEPT_NO = :RECEPT_NO AND CUST_NO = :CUST_NO AND CARRIERID IS NULL";
+
+                            await conn.ExecuteAsync(sql2, new
+                            {
+                                RECEPT_NO = key.RECEPT_NO,
+                                CUST_NO = key.CUST_NO,
+                                DATA = EfcsService.GetCARRIERIDDate(item.EINV_CARDNO)
+                            });
                         }
 
+                    }
+                    
 
+
+                    number++;
+                    string DETAILNO = "";
+
+                    if (number < 10)
+                    {
+                        DETAILNO = "0" + number.ToString();
+                    }
+                    else
+                    {
+                        DETAILNO = number.ToString();
+                    }
 
                         string sql = @"
                     INSERT INTO SA.EFCS_B208
@@ -266,7 +279,8 @@ namespace hsinchugas_efcs_api.Controllers
                         BILLBATCH,
                         EFCSSEQNO,
                         EINV_CARDNO,
-                        CLEAR_DT
+                        CLEAR_DT,
+                        CUST_NO
                     )
                     VALUES
                     (
@@ -284,7 +298,8 @@ namespace hsinchugas_efcs_api.Controllers
                         :BILLBATCH,
                         :EFCSSEQNO,
                         :EINV_CARDNO,
-                        :CLEAR_DT
+                        :CLEAR_DT,
+                        :CUST_NO
                     )";
 
                         await conn.ExecuteAsync(sql, new
@@ -299,23 +314,13 @@ namespace hsinchugas_efcs_api.Controllers
                             PAY_CLRDATE = item.PAY_CLRDATE,
                             CHECKTYPE = item.CHECKTYPE,
                             BILLTYPE = item.BILLTYPE,
-                            BILLDATA = item.BILLDATA,
+                            BILLDATA = key.RECEPT_NO,
                             BILLBATCH = item.BILLBATCH,
                             EFCSSEQNO = item.EFCSSEQNO,
                             EINV_CARDNO = item.EINV_CARDNO,
                             CLEAR_DT = DateTime.Now,
-                        });
-                        /*
-                        string sql2 = @"UPDATE RCPM005 SET  CLEAR_DT = :DATA WHERE CUST_NO = :CUST_NO AND RCV_YMD = :RCV_YMD AND RECEPT_NO = :RECEPT_NO";
-
-                        await conn.ExecuteAsync(sql2, new
-                        {
                             CUST_NO = key.CUST_NO,
-                            RCV_YMD = key.RCV_YMD,
-                            RECEPT_NO = key.RECEPT_NO,
-                            DATA = EfcsService.GetTaiwanDate()
                         });
-                        */
 
 
                         PAYDETAIL_RS.Add(new PAYDETAIL_RS
@@ -332,7 +337,8 @@ namespace hsinchugas_efcs_api.Controllers
                             PAY_DISPDATA1 = "成功",   // 結果值 1 (120)
                         });
 
-                    }
+
+
 
                 }
 
@@ -379,6 +385,8 @@ namespace hsinchugas_efcs_api.Controllers
                 var check = Verify.CheckCommon(request);
                 if (check != null) return Ok(check);
 
+                var EfcsService = new EfcsService(_config);
+                EfcsService.EFCS_LOG(_db, JsonSerializer.Serialize(request), "", "B219輸入", Request.GetDisplayUrl(), "200");
 
                 var data = new ALL<BillerQueryNotifyMsgRs>()
                 {
@@ -391,7 +399,6 @@ namespace hsinchugas_efcs_api.Controllers
                     SEC = new SEC()
                 };
 
-                var EfcsService = new EfcsService(_config);
                 var txnDatetime = DateTime.Now.ToString("yyyyMMddHHmmss");
 
                 var QUERYDETAIL_B219_RS = new QUERYDETAIL_B219_RS();
@@ -510,7 +517,7 @@ namespace hsinchugas_efcs_api.Controllers
                 data.SEC.MAC = EfcsService.ComputeMac(JsonSerializer.Serialize(data), txnDatetime, _config["HEAD:MAC_KEY"]);
 
 
-                EfcsService.EFCS_LOG(_db, JsonSerializer.Serialize(request), JsonSerializer.Serialize(data), "B207", Request.GetDisplayUrl(), "200");
+                EfcsService.EFCS_LOG(_db, JsonSerializer.Serialize(request), JsonSerializer.Serialize(data), "B219輸出", Request.GetDisplayUrl(), "200");
                 return Ok(data);
 
 

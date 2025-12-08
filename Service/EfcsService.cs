@@ -166,6 +166,26 @@ namespace hsinchugas_efcs_api.Service
                 RECEPT_NO = receiptNo
             };
         }
+
+        public BillDecodeResult2 DecodeBillData2(string billdata)
+        {
+            if (string.IsNullOrWhiteSpace(billdata))
+                throw new ArgumentException("BILLDATA 不可為空");
+
+            if (billdata.Length < 7) // 7 + 7 + 至少 5
+                throw new ArgumentException("BILLDATA 長度不符格式");
+
+            // 固定長度切割
+            string custNo = billdata.Substring(0, 7);  // CUST_NO(7)
+            //string rcyYmd = billdata.Substring(7, 6);  // RCV_YMD(7)
+            string receiptNo = billdata.Substring(7); // 剩下全部（RECEIPT_NO 5–6）
+
+            return new BillDecodeResult2
+            {
+                CUST_NO = custNo,
+                RECEPT_NO = receiptNo
+            };
+        }
         public static string GetTaiwanDate()
         {
             TaiwanCalendar tc = new TaiwanCalendar();
@@ -173,6 +193,14 @@ namespace hsinchugas_efcs_api.Service
             return $"{tc.GetYear(now)}{now:MMdd}";
         }
 
+        public static string GetCARRIERIDDate(string CARRIERID)
+        {
+            int index = CARRIERID.LastIndexOf('/');
+            if (index == -1) return null;  // 沒有找到 '/'
+
+            return CARRIERID.Substring(index);  // 從 / 開始取到結尾（包含 /）
+        }
+        
 
         public decimal TotalAmount(dynamic item)
         {

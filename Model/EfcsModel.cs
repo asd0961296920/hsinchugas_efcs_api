@@ -92,6 +92,12 @@ namespace hsinchugas_efcs_api.Model
 
 
 
+    public class BillDecodeResult2
+    {
+        public string CUST_NO { get; set; }
+        public string RECEPT_NO { get; set; }
+    }
+
 
 
 
