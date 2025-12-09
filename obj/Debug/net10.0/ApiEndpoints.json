@@ -74,6 +74,27 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "hsinchugas_efcs_api.Controllers.WeatherForecastController",
+    "Method": "PostMAC",
+    "RelativePath": "api/MAC/{time}",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "rawJson",
+        "Type": "System.Text.Json.JsonElement",
+        "IsRequired": true
+      },
+      {
+        "Name": "time",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "hsinchugas_efcs_api.Controllers.MISController",
     "Method": "mis_config_get",
     "RelativePath": "api/mis/config/get",

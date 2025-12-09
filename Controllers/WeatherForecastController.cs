@@ -13,6 +13,13 @@ namespace hsinchugas_efcs_api.Controllers
         [
             "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
         ];
+        private readonly IConfiguration _config;
+
+
+        public WeatherForecastController(IConfiguration config)
+        {
+            _config = config;
+        }
 
         [HttpGet("GetWeatherForecast")]
         public IEnumerable<WeatherForecast> Get()
@@ -38,6 +45,17 @@ namespace hsinchugas_efcs_api.Controllers
         }
 
 
+
+        [HttpPost("api/MAC/{time}")]
+        public async Task<IActionResult> PostMAC([FromBody] JsonElement rawJson, string time)
+        {
+
+
+            string docData = JsonSerializer.Serialize(rawJson);
+
+
+            return Ok(EfcsService.ComputeMac(docData, time, _config["HEAD:MAC_KEY"]));
+        }
 
 
 
