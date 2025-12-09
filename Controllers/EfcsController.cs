@@ -197,7 +197,8 @@ namespace hsinchugas_efcs_api.Controllers
                 var check = Verify.CheckCommon(request);
                 if (check != null) return Ok(check);
 
-
+                var check2 = Verify.ValidateB208(request.DOCDATA.BODY);
+                if (check2 != null) return Ok(check2);
 
                 var data = new ALL<BillerDataPayRs>()
                 {
