@@ -158,8 +158,8 @@ namespace hsinchugas_efcs_api.Controllers
                 */
                     data.DOCDATA.HEAD.ICCHK_CODE = "0000";
                 data.DOCDATA.HEAD.ICCHK_CODE_DESC = "請求成功";
-                data.SEC.DIG = EfcsService.GenerateDIG(JsonSerializer.Serialize(data));
-                data.SEC.MAC = EfcsService.ComputeMac(JsonSerializer.Serialize(data), txnDatetime, _config["HEAD:MAC_KEY"]);
+                data.SEC.DIG = EfcsService.GenerateDIG(JsonSerializer.Serialize(data.DOCDATA));
+                data.SEC.MAC = EfcsService.ComputeMac(JsonSerializer.Serialize(data.DOCDATA), txnDatetime, _config["HEAD:MAC_KEY"]);
 
 
                 EfcsService.EFCS_LOG(_db, JsonSerializer.Serialize(request), JsonSerializer.Serialize(data),"B207輸出", Request.GetDisplayUrl(),"200");
@@ -264,7 +264,7 @@ namespace hsinchugas_efcs_api.Controllers
                     }
 
                         string sql = @"
-                    INSERT INTO SA.EFCS_B208
+                    INSERT INTO EFCS_B208
                     (
                         DETAILNO,
                         OUTBANKID,
@@ -352,8 +352,8 @@ namespace hsinchugas_efcs_api.Controllers
 
                 data.DOCDATA.HEAD.ICCHK_CODE = "0000";
                 data.DOCDATA.HEAD.ICCHK_CODE_DESC = "請求成功";
-                data.SEC.DIG = EfcsService.GenerateDIG(JsonSerializer.Serialize(data));
-                data.SEC.MAC = EfcsService.ComputeMac(JsonSerializer.Serialize(data), txnDatetime, _config["HEAD:MAC_KEY"]);
+                data.SEC.DIG = EfcsService.GenerateDIG(JsonSerializer.Serialize(data.DOCDATA));
+                data.SEC.MAC = EfcsService.ComputeMac(JsonSerializer.Serialize(data.DOCDATA), txnDatetime, _config["HEAD:MAC_KEY"]);
                 EfcsService.EFCS_LOG(_db, JsonSerializer.Serialize(request), JsonSerializer.Serialize(data), "B208輸出", Request.GetDisplayUrl(), "200");
                 return Ok(data);
                
@@ -514,8 +514,8 @@ namespace hsinchugas_efcs_api.Controllers
                 data.DOCDATA.BODY.QUERYHEAD = QUERYHEAD_B219_RS;
                 data.DOCDATA.HEAD.ICCHK_CODE = "0000";
                 data.DOCDATA.HEAD.ICCHK_CODE_DESC = "請求成功";
-                data.SEC.DIG = EfcsService.GenerateDIG(JsonSerializer.Serialize(data));
-                data.SEC.MAC = EfcsService.ComputeMac(JsonSerializer.Serialize(data), txnDatetime, _config["HEAD:MAC_KEY"]);
+                data.SEC.DIG = EfcsService.GenerateDIG(JsonSerializer.Serialize(data.DOCDATA));
+                data.SEC.MAC = EfcsService.ComputeMac(JsonSerializer.Serialize(data.DOCDATA), txnDatetime, _config["HEAD:MAC_KEY"]);
 
 
                 EfcsService.EFCS_LOG(_db, JsonSerializer.Serialize(request), JsonSerializer.Serialize(data), "B219輸出", Request.GetDisplayUrl(), "200");
@@ -586,8 +586,8 @@ namespace hsinchugas_efcs_api.Controllers
                 data.DOCDATA.BODY.NOTICEHEAD.END_TIME = config.B212_END.ToString("yyyyMMddHHmmss");
             }
 
-            data.SEC.DIG = EfcsService.GenerateDIG(JsonSerializer.Serialize(data));
-            data.SEC.MAC = EfcsService.ComputeMac(JsonSerializer.Serialize(data), txnDatetime, _config["HEAD:MAC_KEY"]);
+            data.SEC.DIG = EfcsService.GenerateDIG(JsonSerializer.Serialize(data.DOCDATA));
+            data.SEC.MAC = EfcsService.ComputeMac(JsonSerializer.Serialize(data.DOCDATA), txnDatetime, _config["HEAD:MAC_KEY"]);
 
 
 

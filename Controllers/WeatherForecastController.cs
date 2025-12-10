@@ -39,7 +39,7 @@ namespace hsinchugas_efcs_api.Controllers
 
 
             string docData = JsonSerializer.Serialize(rawJson);
-
+            //return Ok(docData);
 
             return Ok(EfcsService.GenerateDIG(docData));
         }
