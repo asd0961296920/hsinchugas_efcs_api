@@ -68,42 +68,90 @@ namespace hsinchugas_efcs_api.Service
 
 
 
+        // ----------------------------------------------------------------------------------------
+        // 」 程沧タ絋禲 MAC = 3D051450絛ㄒ PRS_CODE = B207
+        // ----------------------------------------------------------------------------------------
         public static string ComputeMac(string macdataString, string txnDatetime, string keyHex)
         {
-            //string txnDatetime = DateTime.Now.ToString("yyyyMMddHHmmss");
+            // ---------------------------------------------------
+            // ˙艼 1macdataString = DOCDATA ゅぃΤ传︽
+            // ---------------------------------------------------
+            macdataString = macdataString.Replace("\r", "").Replace("\n", "");
 
-            // ˙艼macdataString 竒パ场矗ㄑ= DOCDATA ﹍﹃
-
-            // ˙艼SHA256 篕璶
+            // ---------------------------------------------------
+            // ˙艼 2SHA256眔 32 bytes ﹍
+            // ---------------------------------------------------
             byte[] shaBytes;
             using (SHA256 sha = SHA256.Create())
             {
                 shaBytes = sha.ComputeHash(Encoding.UTF8.GetBytes(macdataString));
             }
 
-            // ˙艼ICV = TXN_DATETIME 干 16 
+            // ---------------------------------------------------
+            // ˙艼 3ICV = TXN_DATETIME 干骸 16 娩干 '0'
+            // ㄒ20180716140509 △ 2018071614050900
+            // ---------------------------------------------------
             string icvString = txnDatetime.PadRight(16, '0');
+            byte[] ivBytes = PackICV(icvString); // タ絋锣 8 bytes
 
-            // 3DES CBC IV = 8 Bytes △ 玡 8 じ
-            string iv8 = icvString.Substring(0, 8);
-            byte[] ivBytes = Encoding.ASCII.GetBytes(iv8);
-
-            // ˙艼3DES CBC 盞
+            // ---------------------------------------------------
+            // ˙艼 43DES CBC礚 Padding
+            // ---------------------------------------------------
             byte[] keyBytes = HexToBytes(keyHex);
+            FixParityBits(keyBytes); // 」 ㄌ FIPS 46-3 砏絛タ parityJava 籔 C# 穦璓
+
             byte[] macCode = TripleDESCBCEncrypt(shaBytes, keyBytes, ivBytes);
 
+            // ---------------------------------------------------
+            // ˙艼 5程 BLOCK8 bytes玡 4 bytes
+            // ---------------------------------------------------
+            byte[] last8 = macCode.Skip(macCode.Length - 8).Take(8).ToArray();
+            byte[] mac4 = last8.Take(4).ToArray();
 
-            // ˙艼き程 Block8 Bytes玡 4 Bytes
-            byte[] lastBlock = new byte[8];
-            Array.Copy(macCode, macCode.Length - 8, lastBlock, 0, 8);
-
-            byte[] mac4 = new byte[4];
-            Array.Copy(lastBlock, 0, mac4, 0, 4);
-
-            // ˙艼せ锣 HEX 糶
+            // ---------------------------------------------------
+            // ˙艼 6锣 HEX糶
+            // ---------------------------------------------------
             return BytesToHex(mac4);
         }
 
+        // ----------------------------------------------------------------------------------------
+        // ㄌ砏ICV = 16 せ秈じ △ – 2 じ pack Θ 1 byte 8 bytes
+        // ----------------------------------------------------------------------------------------
+        private static byte[] PackICV(string icv16)
+        {
+            byte[] buffer = new byte[8];
+            for (int i = 0; i < 16; i += 2)
+            {
+                buffer[i / 2] = Convert.ToByte(icv16.Substring(i, 2), 16);
+            }
+            return buffer;
+        }
+
+        // ----------------------------------------------------------------------------------------
+        // 」 タ 3DES Parity bitㄌ FIPS 46-3– 7 bits 惠 parity
+        // ----------------------------------------------------------------------------------------
+        private static void FixParityBits(byte[] key)
+        {
+            for (int i = 0; i < key.Length; i++)
+            {
+                int b = key[i];
+                int bitCount = 0;
+                for (int j = 1; j < 8; j++)
+                {
+                    if (((b >> j) & 1) == 1) bitCount++;
+                }
+
+                // 案喷LSB 喷 bit
+                if ((bitCount % 2) == 0)
+                    key[i] = (byte)(b | 0x01); // 砞计
+                else
+                    key[i] = (byte)(b & 0xFE); // 砞案计
+            }
+        }
+
+        // ----------------------------------------------------------------------------------------
+        // Triple DES CBC Encrypt礚 Padding︽干 0
+        // ----------------------------------------------------------------------------------------
         private static byte[] TripleDESCBCEncrypt(byte[] data, byte[] key, byte[] iv)
         {
             using (TripleDESCryptoServiceProvider tdes = new TripleDESCryptoServiceProvider())
@@ -111,9 +159,9 @@ namespace hsinchugas_efcs_api.Service
                 tdes.Key = key;
                 tdes.IV = iv;
                 tdes.Mode = CipherMode.CBC;
-                tdes.Padding = PaddingMode.None; // eFCS 砏絛ぃ恶
+                tdes.Padding = PaddingMode.None;
 
-                // 戈ゲ斗琌 8 计 △ 璝ぃ琌璶︽干 0
+                // 8 byte 癸霍
                 int mod = data.Length % 8;
                 if (mod != 0)
                 {
@@ -121,22 +169,23 @@ namespace hsinchugas_efcs_api.Service
                     Array.Resize(ref data, data.Length + pad);
                 }
 
-                using (ICryptoTransform encryptor = tdes.CreateEncryptor())
+                using (ICryptoTransform enc = tdes.CreateEncryptor())
                 {
-                    return encryptor.TransformFinalBlock(data, 0, data.Length);
+                    return enc.TransformFinalBlock(data, 0, data.Length);
                 }
             }
         }
 
+        // HEX △ bytes
         private static byte[] HexToBytes(string hex)
         {
-            int len = hex.Length;
-            byte[] result = new byte[len / 2];
-            for (int i = 0; i < len; i += 2)
-                result[i / 2] = Convert.ToByte(hex.Substring(i, 2), 16);
-            return result;
+            byte[] buf = new byte[hex.Length / 2];
+            for (int i = 0; i < buf.Length; i++)
+                buf[i] = Convert.ToByte(hex.Substring(i * 2, 2), 16);
+            return buf;
         }
 
+        // bytes △ HEX ﹃
         private static string BytesToHex(byte[] data)
         {
             StringBuilder sb = new StringBuilder();
@@ -144,6 +193,7 @@ namespace hsinchugas_efcs_api.Service
                 sb.AppendFormat("{0:X2}", b);
             return sb.ToString();
         }
+
 
 
         public BillDecodeResult DecodeBillData(string billdata)

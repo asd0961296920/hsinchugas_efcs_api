@@ -96,8 +96,8 @@ namespace hsinchugas_efcs_api.Controllers
                             });
                         TOTAL_COUNT += EfcsService.TotalAmount(item);
                     }
-                    QUERYHEAD.TOTAL_AMOUNT = number;
-                    QUERYHEAD.TOTAL_COUNT = TOTAL_COUNT;
+                    QUERYHEAD.TOTAL_AMOUNT = TOTAL_COUNT;
+                    QUERYHEAD.TOTAL_COUNT = number;
 
                     data.DOCDATA.BODY.QUERYDETAIL = QUERYDETAIL;
                     data.DOCDATA.BODY.QUERYHEAD = QUERYHEAD;
@@ -156,14 +156,34 @@ namespace hsinchugas_efcs_api.Controllers
 
                 }
                 */
-                    data.DOCDATA.HEAD.ICCHK_CODE = "0000";
+                data.DOCDATA.HEAD.ICCHK_CODE = "0000";
                 data.DOCDATA.HEAD.ICCHK_CODE_DESC = "請求成功";
-                data.SEC.DIG = EfcsService.GenerateDIG(JsonSerializer.Serialize(data.DOCDATA));
-                data.SEC.MAC = EfcsService.ComputeMac(JsonSerializer.Serialize(data.DOCDATA), txnDatetime, _config["HEAD:MAC_KEY"]);
 
 
-                EfcsService.EFCS_LOG(_db, JsonSerializer.Serialize(request), JsonSerializer.Serialize(data),"B207輸出", Request.GetDisplayUrl(),"200");
-                return Ok(data);
+                //收尾
+                var options = new JsonSerializerOptions
+                {
+                    Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+                };
+                // 不要 Unicode escape
+                string docDataJson = JsonSerializer.Serialize(data.DOCDATA, options);
+
+                data.SEC.DIG = EfcsService.GenerateDIG(docDataJson);
+                data.SEC.MAC = EfcsService.ComputeMac(docDataJson, txnDatetime, _config["HEAD:MAC_KEY"]);
+
+
+
+                var options2 = new JsonSerializerOptions
+                {
+                    Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+                };
+
+                // 不要 Unicode escape
+                string docDataJson2 = JsonSerializer.Serialize(data, options);
+
+
+                EfcsService.EFCS_LOG(_db, JsonSerializer.Serialize(request), docDataJson2, "B207輸出", Request.GetDisplayUrl(),"200");
+                return Ok(docDataJson2);
 
             }
             catch (Exception ex)
@@ -237,13 +257,25 @@ namespace hsinchugas_efcs_api.Controllers
                     {
                         if(EfcsService.GetCARRIERIDDate(item.EINV_CARDNO) != null)
                         {
-                            string sql2 = @"UPDATE RCPM005 SET  CARRIERID = :DATA WHERE  RECEPT_NO = :RECEPT_NO AND CUST_NO = :CUST_NO AND CARRIERID IS NULL";
+                            string sql2 = @"UPDATE RCPM005 SET  CARRIERID = :CARRIERID ,FILE_DATE = :FILE_DATE WHERE  RECEPT_NO = :RECEPT_NO AND CUST_NO = :CUST_NO";
 
                             await conn.ExecuteAsync(sql2, new
                             {
                                 RECEPT_NO = key.RECEPT_NO,
                                 CUST_NO = key.CUST_NO,
-                                DATA = EfcsService.GetCARRIERIDDate(item.EINV_CARDNO)
+                                CARRIERID = EfcsService.GetCARRIERIDDate(item.EINV_CARDNO),
+                                FILE_DATE = EfcsService.GetTaiwanDate()
+                            });
+                        }
+                        else
+                        {
+                            string sql2 = @"UPDATE RCPM005 SET  FILE_DATE = :DATA WHERE  RECEPT_NO = :RECEPT_NO AND CUST_NO = :CUST_NO";
+
+                            await conn.ExecuteAsync(sql2, new
+                            {
+                                RECEPT_NO = key.RECEPT_NO,
+                                CUST_NO = key.CUST_NO,
+                                FILE_DATE = EfcsService.GetTaiwanDate()
                             });
                         }
 
@@ -352,10 +384,28 @@ namespace hsinchugas_efcs_api.Controllers
 
                 data.DOCDATA.HEAD.ICCHK_CODE = "0000";
                 data.DOCDATA.HEAD.ICCHK_CODE_DESC = "請求成功";
-                data.SEC.DIG = EfcsService.GenerateDIG(JsonSerializer.Serialize(data.DOCDATA));
-                data.SEC.MAC = EfcsService.ComputeMac(JsonSerializer.Serialize(data.DOCDATA), txnDatetime, _config["HEAD:MAC_KEY"]);
-                EfcsService.EFCS_LOG(_db, JsonSerializer.Serialize(request), JsonSerializer.Serialize(data), "B208輸出", Request.GetDisplayUrl(), "200");
-                return Ok(data);
+
+
+                //收尾
+                var options = new JsonSerializerOptions
+                {
+                    Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+                };
+
+                // 正確做法：保持中文，不要 Unicode escape
+                string docDataJson = JsonSerializer.Serialize(data.DOCDATA, options);
+
+                data.SEC.DIG = EfcsService.GenerateDIG(docDataJson);
+                data.SEC.MAC = EfcsService.ComputeMac(docDataJson, txnDatetime, _config["HEAD:MAC_KEY"]);
+                var options2 = new JsonSerializerOptions
+                {
+                    Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+                };
+
+                // 正確做法：保持中文，不要 Unicode escape
+                string docDataJson2 = JsonSerializer.Serialize(data, options);
+                EfcsService.EFCS_LOG(_db, JsonSerializer.Serialize(request), docDataJson2, "B208輸出", Request.GetDisplayUrl(), "200");
+                return Ok(docDataJson2);
                
             }catch (Exception ex)
             {
@@ -510,16 +560,34 @@ namespace hsinchugas_efcs_api.Controllers
                     }
                 }
                 */
-                    data.DOCDATA.BODY.QUERYDETAIL = QUERYDETAIL_B219_RS;
+                data.DOCDATA.BODY.QUERYDETAIL = QUERYDETAIL_B219_RS;
                 data.DOCDATA.BODY.QUERYHEAD = QUERYHEAD_B219_RS;
                 data.DOCDATA.HEAD.ICCHK_CODE = "0000";
                 data.DOCDATA.HEAD.ICCHK_CODE_DESC = "請求成功";
-                data.SEC.DIG = EfcsService.GenerateDIG(JsonSerializer.Serialize(data.DOCDATA));
-                data.SEC.MAC = EfcsService.ComputeMac(JsonSerializer.Serialize(data.DOCDATA), txnDatetime, _config["HEAD:MAC_KEY"]);
 
 
-                EfcsService.EFCS_LOG(_db, JsonSerializer.Serialize(request), JsonSerializer.Serialize(data), "B219輸出", Request.GetDisplayUrl(), "200");
-                return Ok(data);
+                //收尾
+                var options = new JsonSerializerOptions
+                {
+                    Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+                };
+
+                // 正確做法：保持中文，不要 Unicode escape
+                string docDataJson = JsonSerializer.Serialize(data.DOCDATA, options);
+
+
+                data.SEC.DIG = EfcsService.GenerateDIG(docDataJson);
+                data.SEC.MAC = EfcsService.ComputeMac(docDataJson, txnDatetime, _config["HEAD:MAC_KEY"]);
+                var options2 = new JsonSerializerOptions
+                {
+                    Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+                };
+
+                // 正確做法：保持中文，不要 Unicode escape
+                string docDataJson2 = JsonSerializer.Serialize(data, options);
+
+                EfcsService.EFCS_LOG(_db, JsonSerializer.Serialize(request), docDataJson2, "B219輸出", Request.GetDisplayUrl(), "200");
+                return Ok(docDataJson2);
 
 
             }
@@ -586,20 +654,36 @@ namespace hsinchugas_efcs_api.Controllers
                 data.DOCDATA.BODY.NOTICEHEAD.END_TIME = config.B212_END.ToString("yyyyMMddHHmmss");
             }
 
-            data.SEC.DIG = EfcsService.GenerateDIG(JsonSerializer.Serialize(data.DOCDATA));
-            data.SEC.MAC = EfcsService.ComputeMac(JsonSerializer.Serialize(data.DOCDATA), txnDatetime, _config["HEAD:MAC_KEY"]);
+            var options = new JsonSerializerOptions
+            {
+                Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+            };
+
+            // 正確做法：保持中文，不要 Unicode escape
+            string docDataJson = JsonSerializer.Serialize(data.DOCDATA, options);
+
+            // 用正確的字串算 DIG
+            data.SEC.DIG = EfcsService.GenerateDIG(docDataJson);
+            data.SEC.MAC = EfcsService.ComputeMac(docDataJson, txnDatetime, _config["HEAD:MAC_KEY"]);
 
 
 
+            var options2 = new JsonSerializerOptions
+            {
+                Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+            };
 
+            // 正確做法：保持中文，不要 Unicode escape
+            string docDataJson2 = JsonSerializer.Serialize(data, options);
+
+            //return Ok(docDataJson2);
             var client = new HttpClient();
 
             var url = _config["HEAD:B212_URL"];
 
-            // 序列化成 JSON
-            var json = JsonSerializer.Serialize(data);
-            //return Ok(data);
-            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            //return Ok(JsonSerializer.Serialize(data));
+            var content = new StringContent(docDataJson2, Encoding.UTF8, "application/json");
             
             // 發送 POST
             var response = await client.PostAsync(url, content);
@@ -609,7 +693,7 @@ namespace hsinchugas_efcs_api.Controllers
 
 
 
-            EfcsService.EFCS_LOG(_db, result, JsonSerializer.Serialize(data), "B212", Request.GetDisplayUrl(), "200");
+            EfcsService.EFCS_LOG(_db, result, docDataJson2, "B212", Request.GetDisplayUrl(), "200");
 
             return Ok(result);
         }
