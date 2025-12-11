@@ -4,10 +4,6 @@ namespace hsinchugas_efcs_api.Model
 {
     public class BillerSystemNoticeRq
     {
-        public NOTICEHEAD NOTICEHEAD { get; set; }
-    }
-    public class NOTICEHEAD
-    {
         /// <summary>
         /// 公告通知類型
         /// A：業者系統啟動服務

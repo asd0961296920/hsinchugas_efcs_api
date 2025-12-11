@@ -637,7 +637,7 @@ namespace hsinchugas_efcs_api.Controllers
             };
             data.FUN.FUNNAME = "BillerSystemNotice";
             data.FUN.VER = "1.00";
-            data.DOCDATA.BODY.NOTICEHEAD = new NOTICEHEAD();
+            data.DOCDATA.BODY = new BillerSystemNoticeRq();
             var txnDatetime = DateTime.Now.ToString("yyyyMMddHHmmss");
 
 
@@ -645,13 +645,13 @@ namespace hsinchugas_efcs_api.Controllers
             using var conn = _db.CreateConnection();
             string sql2 = "SELECT * FROM EFCS_CONFIG";
             var config = await conn.QueryFirstOrDefaultAsync(sql2);
-            data.DOCDATA.BODY.NOTICEHEAD.NOTICE_TYPE = config.B212_NOTIFY;
-            data.DOCDATA.BODY.NOTICEHEAD.MEMO = config.B212_TEXT;
-            data.DOCDATA.BODY.NOTICEHEAD.BEGIN_TIME = config.B212_START.ToString("yyyyMMddHHmmss");
+            data.DOCDATA.BODY.NOTICE_TYPE = config.B212_NOTIFY;
+            data.DOCDATA.BODY.MEMO = config.B212_TEXT;
+            data.DOCDATA.BODY.BEGIN_TIME = config.B212_START.ToString("yyyyMMddHHmmss");
             data.DOCDATA.HEAD.TXN_DATETIME = txnDatetime;
             if (config.B212_NOTIFY != "A")
             {
-                data.DOCDATA.BODY.NOTICEHEAD.END_TIME = config.B212_END.ToString("yyyyMMddHHmmss");
+                data.DOCDATA.BODY.END_TIME = config.B212_END.ToString("yyyyMMddHHmmss");
             }
 
             var options = new JsonSerializerOptions
