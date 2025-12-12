@@ -8,6 +8,7 @@ using System.Data.SqlTypes;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
+using System.Xml.Linq;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace hsinchugas_efcs_api.Controllers
@@ -52,7 +53,7 @@ namespace hsinchugas_efcs_api.Controllers
                     SEC = new SEC()
                 };
 
-                var txnDatetime = DateTime.Now.ToString("yyyyMMddHHmmss");
+                string txnDatetime = request.DOCDATA.HEAD.TXN_DATETIME;
 
                 data.DOCDATA.HEAD.TXN_DATETIME = txnDatetime;
                 var BillerDataQueryRs = new BillerDataQueryRs();
@@ -64,9 +65,17 @@ namespace hsinchugas_efcs_api.Controllers
 
                 if (request.DOCDATA.BODY.QUERY_TYPE == "1" || request.DOCDATA.BODY.QUERY_TYPE == "2")
                 {
+                    DateTime lastYear = DateTime.Now.AddYears(-1);
+
+                    // 西元轉民國年
+                    int rocYear = lastYear.Year - 1911;
+
+                    // 組成民國年月日 (YYYMMDD)
+                    int rocDateNumber = int.Parse($"{rocYear:000}{lastYear.Month:00}{lastYear.Day:00}");
                     using var conn = _db.CreateConnection();
-                    string sql = "SELECT * FROM RCPM005 WHERE CUST_NO = :QUERY_DATA1 AND (FILE_DATE is NULL OR FILE_DATE = 0)";
-                    var RCPM005 =  await conn.QueryAsync(sql, new { QUERY_DATA1 = request.DOCDATA.BODY.QUERY_DATA1 });
+                    string sql = @"SELECT * FROM RCPM005 WHERE CUST_NO = :QUERY_DATA1 AND (FILE_DATE is NULL OR FILE_DATE = 0)   
+        AND RCV_YMD >= :rocDateNumber";
+                    var RCPM005 =  await conn.QueryAsync(sql, new { QUERY_DATA1 = request.DOCDATA.BODY.QUERY_DATA1 , rocDateNumber = rocDateNumber });
                     int number = 0;
                     int TOTAL_COUNT = 0;
                     foreach ( var item in RCPM005)
@@ -230,7 +239,7 @@ namespace hsinchugas_efcs_api.Controllers
                     },
                     SEC = new SEC()
                 };
-                var txnDatetime = DateTime.Now.ToString("yyyyMMddHHmmss");
+                string txnDatetime = request.DOCDATA.HEAD.TXN_DATETIME;
 
                 data.DOCDATA.HEAD.TXN_DATETIME = txnDatetime;
                 data.DOCDATA.BODY.PAYHEAD = new PAYHEAD_RS();
@@ -450,7 +459,7 @@ namespace hsinchugas_efcs_api.Controllers
                     SEC = new SEC()
                 };
 
-                var txnDatetime = DateTime.Now.ToString("yyyyMMddHHmmss");
+                string txnDatetime = request.DOCDATA.HEAD.TXN_DATETIME;
 
                 var QUERYDETAIL_B219_RS = new QUERYDETAIL_B219_RS();
                 data.DOCDATA.HEAD.TXN_DATETIME = txnDatetime;
@@ -461,9 +470,18 @@ namespace hsinchugas_efcs_api.Controllers
 
                 if (request.DOCDATA.BODY.QUERYDETAIL.QUERY_TYPE == "1" || request.DOCDATA.BODY.QUERYDETAIL.QUERY_TYPE == "2")
                 {
+                    DateTime lastYear = DateTime.Now.AddYears(-1);
+
+                    // 西元轉民國年
+                    int rocYear = lastYear.Year - 1911;
+
+                    // 組成民國年月日 (YYYMMDD)
+                    int rocDateNumber = int.Parse($"{rocYear:000}{lastYear.Month:00}{lastYear.Day:00}");
+
                     using var conn = _db.CreateConnection();
-                    string sql = "SELECT * FROM RCPM005 WHERE CUST_NO = :QUERY_DATA1 AND (FILE_DATE is NULL OR FILE_DATE = 0)";
-                    var RCPM005 = await conn.QueryAsync(sql, new { QUERY_DATA1 = request.DOCDATA.BODY.QUERYDETAIL.QUERY_DATA1 });
+                    string sql = @"SELECT * FROM RCPM005 WHERE CUST_NO = :QUERY_DATA1 AND (FILE_DATE is NULL OR FILE_DATE = 0)         
+        AND RCV_YMD >= :rocDateNumber";
+                    var RCPM005 = await conn.QueryAsync(sql, new { QUERY_DATA1 = request.DOCDATA.BODY.QUERYDETAIL.QUERY_DATA1 , rocDateNumber  = rocDateNumber });
                     string sql2 = "SELECT * FROM EFCS_CONFIG";
                     var config = await conn.QueryFirstOrDefaultAsync(sql2);
                     if (RCPM005.Any())
