@@ -174,25 +174,29 @@ namespace hsinchugas_efcs_api.Controllers
                 {
                     Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping
                 };
-                // 不要 Unicode escape
+
+                // 正確做法：保持中文，不要 Unicode escape
                 string docDataJson = JsonSerializer.Serialize(data.DOCDATA, options);
 
+                // 用正確的字串算 DIG
                 data.SEC.DIG = EfcsService.GenerateDIG(docDataJson);
                 data.SEC.MAC = EfcsService.ComputeMac(docDataJson, txnDatetime, _config["HEAD:MAC_KEY"]);
 
 
 
-                var options2 = new JsonSerializerOptions
-                {
-                    Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping
-                };
-
-                // 不要 Unicode escape
+                // 正確做法：保持中文，不要 Unicode escape
                 string docDataJson2 = JsonSerializer.Serialize(data, options);
 
 
                 EfcsService.EFCS_LOG(_db, JsonSerializer.Serialize(request), docDataJson2, "B207輸出", Request.GetDisplayUrl(),"200");
-                return Ok(docDataJson2);
+
+                
+                var bytes = Encoding.UTF8.GetBytes(docDataJson2);
+                return new FileContentResult(bytes, "application/json");
+                
+                //return Ok(docDataJson2);
+
+
 
             }
             catch (Exception ex)
@@ -414,9 +418,14 @@ namespace hsinchugas_efcs_api.Controllers
                 // 正確做法：保持中文，不要 Unicode escape
                 string docDataJson2 = JsonSerializer.Serialize(data, options);
                 EfcsService.EFCS_LOG(_db, JsonSerializer.Serialize(request), docDataJson2, "B208輸出", Request.GetDisplayUrl(), "200");
-                return Ok(docDataJson2);
-               
-            }catch (Exception ex)
+
+                var bytes = Encoding.UTF8.GetBytes(docDataJson2);
+                return new FileContentResult(bytes, "application/json");
+
+
+
+            }
+            catch (Exception ex)
             {
                 // 一旦進 catch → 立刻終了，不會繼續往下跑
                 var error =  new
@@ -605,7 +614,12 @@ namespace hsinchugas_efcs_api.Controllers
                 string docDataJson2 = JsonSerializer.Serialize(data, options);
 
                 EfcsService.EFCS_LOG(_db, JsonSerializer.Serialize(request), docDataJson2, "B219輸出", Request.GetDisplayUrl(), "200");
-                return Ok(docDataJson2);
+
+                var bytes = Encoding.UTF8.GetBytes(docDataJson2);
+                return new FileContentResult(bytes, "application/json");
+
+
+
 
 
             }
