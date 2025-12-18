@@ -33,7 +33,7 @@ namespace hsinchugas_efcs_api.Controllers
             try
             {
                 var EfcsService = new EfcsService(_config);
-                EfcsService.EFCS_LOG(_db, JsonSerializer.Serialize(request), "", "B207輸入", Request.GetDisplayUrl(), "200");
+                EfcsService.EFCS_LOG(_db, JsonSerializer.Serialize(request), "", "B207輸入", HttpContext.Connection.RemoteIpAddress?.ToString(), "200");
                 var check = Verify.CheckCommon(request);
                 if (check != null) return Ok(check);
 
@@ -259,7 +259,7 @@ namespace hsinchugas_efcs_api.Controllers
             try
             {
                 var EfcsService = new EfcsService(_config);
-                EfcsService.EFCS_LOG(_db, JsonSerializer.Serialize(request), "", "B208輸入", Request.GetDisplayUrl(), "200");
+                EfcsService.EFCS_LOG(_db, JsonSerializer.Serialize(request), "", "B208輸入", HttpContext.Connection.RemoteIpAddress?.ToString(), "200");
                 var check = Verify.CheckCommon(request);
                 if (check != null) return Ok(check);
 
@@ -485,7 +485,7 @@ namespace hsinchugas_efcs_api.Controllers
                 if (check != null) return Ok(check);
 
                 var EfcsService = new EfcsService(_config);
-                EfcsService.EFCS_LOG(_db, JsonSerializer.Serialize(request), "", "B219輸入", Request.GetDisplayUrl(), "200");
+                EfcsService.EFCS_LOG(_db, JsonSerializer.Serialize(request), "", "B219輸入", HttpContext.Connection.RemoteIpAddress?.ToString(), "200");
 
                 var data = new ALL<BillerQueryNotifyMsgRs>()
                 {
