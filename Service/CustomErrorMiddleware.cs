@@ -16,7 +16,7 @@ namespace hsinchugas_efcs_api.Service
         {
             _next = next;
         }
-
+        
         public async Task Invoke(HttpContext context)
         {
             var originalBodyStream = context.Response.Body;
@@ -57,6 +57,8 @@ namespace hsinchugas_efcs_api.Service
 
             await newBody.CopyToAsync(originalBodyStream);
             context.Response.Body = originalBodyStream;
+            
+            
         }
 
     }

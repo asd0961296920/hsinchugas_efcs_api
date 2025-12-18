@@ -2,6 +2,7 @@ using hsinchugas_efcs_api.Model;
 using hsinchugas_efcs_api.Service;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace hsinchugas_efcs_api.Controllers
 {
@@ -49,12 +50,19 @@ namespace hsinchugas_efcs_api.Controllers
         [HttpPost("api/MAC/{time}")]
         public async Task<IActionResult> PostMAC([FromBody] JsonElement rawJson, string time)
         {
+            var options = new JsonSerializerOptions
+            {
+                Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+            };
+            string docDataJson = JsonSerializer.Serialize(rawJson, options);
+            //string docData = JsonSerializer.Serialize(rawJson);
+            string mac = EfcsService.ComputeMac(docDataJson, time, _config["HEAD:MAC_KEY"]);
 
-
-            string docData = JsonSerializer.Serialize(rawJson);
-
-
-            return Ok(EfcsService.ComputeMac(docData, time, _config["HEAD:MAC_KEY"]));
+            return Ok(new
+            {
+                mac,
+                docDataJson
+            });
         }
 
 
@@ -63,5 +71,8 @@ namespace hsinchugas_efcs_api.Controllers
 
 
 
+    }
+    class MAC { 
+    
     }
 }

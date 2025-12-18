@@ -245,10 +245,14 @@ namespace hsinchugas_efcs_api.Service
 
         public static string GetCARRIERIDDate(string CARRIERID)
         {
-            int index = CARRIERID.LastIndexOf('/');
-            if (index == -1) return null;  // 沒有找到 '/'
+            if (string.IsNullOrEmpty(CARRIERID))
+                return null; // 你也可以改成 return ""; 依需求
 
-            return CARRIERID.Substring(index);  // 從 / 開始取到結尾（包含 /）
+            int index = CARRIERID.LastIndexOf('/');
+            if (index == -1)
+                return CARRIERID;  // 沒有 "/" → 整串回傳
+
+            return CARRIERID.Substring(index + 1); // 切 "/" 後的字串
         }
         
 
@@ -285,6 +289,21 @@ VALUES
 
         }
 
+        public static string GetNext20thDate()
+        {
+            DateTime today = DateTime.Now;
 
-     }
+            // 本月 20 號
+            DateTime thisMonth20 = new DateTime(today.Year, today.Month, 20);
+
+            DateTime result;
+
+            result = thisMonth20.AddMonths(1);
+
+            return result.ToString("yyyyMMdd");
+        }
+
+
+
+    }
 }

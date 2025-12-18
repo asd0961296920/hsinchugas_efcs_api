@@ -107,10 +107,10 @@ namespace hsinchugas_efcs_api.Service
             if (body.PAYHEAD.TOTAL_COUNT <= 0)
                 return Error("I401", "總筆數屬性檢核不符");
 
-            if (body.PAYDEATIL == null || body.PAYDEATIL.Count == 0)
+            if (body.PAYDETAIL == null || body.PAYDETAIL.Count == 0)
                 return Error("I402", "無明細資料");
 
-            if (body.PAYHEAD.TOTAL_COUNT != body.PAYDEATIL.Count)
+            if (body.PAYHEAD.TOTAL_COUNT != body.PAYDETAIL.Count)
                 return Error("I402", "總筆數與明細筆數不符");
 
             // ========= 2. 總金額檢核 =========
@@ -119,13 +119,13 @@ namespace hsinchugas_efcs_api.Service
             if (body.PAYHEAD.TOTAL_AMOUNT <= 0)
                 return Error("1403", "總金額屬性檢核不符");
             */
-            var sumDetailAmount = body.PAYDEATIL.Sum(x => x.TXNAMOUNT);
+            var sumDetailAmount = body.PAYDETAIL.Sum(x => x.TXNAMOUNT);
 
             if (sumDetailAmount != body.PAYHEAD.TOTAL_AMOUNT)
                 return Error("I404", "總金額與明細加總不符");
 
             // ========= 3. 明細逐筆檢核 =========
-            foreach (var d in body.PAYDEATIL)
+            foreach (var d in body.PAYDETAIL)
             {
                 TOTAL_AMOUNT += d.TXNAMOUNT;
                 // 扣款單位代號檢核

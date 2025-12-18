@@ -7,7 +7,7 @@ namespace hsinchugas_efcs_api.Model
         [JsonPropertyOrder(1)]
         public PAYHEAD PAYHEAD { get; set; } = new PAYHEAD();
         [JsonPropertyOrder(2)]
-        public List<PAYDETAIL> PAYDEATIL { get; set; } = new List<PAYDETAIL>();
+        public List<PAYDETAIL> PAYDETAIL { get; set; } = new List<PAYDETAIL>();
 
     }
 
@@ -133,7 +133,7 @@ namespace hsinchugas_efcs_api.Model
         public PAYHEAD_RS PAYHEAD { get; set; }
 
         [JsonPropertyOrder(2)]
-        public List<PAYDETAIL_RS> PAYDEATIL { get; set; } = new List<PAYDETAIL_RS>();
+        public List<PAYDETAIL_RS> PAYDETAIL { get; set; } = new List<PAYDETAIL_RS>();
     }
 
     public class PAYHEAD_RS

@@ -357,7 +357,7 @@
           "payhead": {
             "$ref": "#/components/schemas/PAYHEAD"
           },
-          "paydeatil": {
+          "paydetail": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/PAYDETAIL"
