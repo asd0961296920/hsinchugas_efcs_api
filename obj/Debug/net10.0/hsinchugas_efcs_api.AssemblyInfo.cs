@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("hsinchugas_efcs_api")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+67c5e0236e0fcba103a0a9ef5671d64712a03ff5")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+71fb29a6422c4443a017eb27f207bb7b8fc43e24")]
 [assembly: System.Reflection.AssemblyProductAttribute("hsinchugas_efcs_api")]
 [assembly: System.Reflection.AssemblyTitleAttribute("hsinchugas_efcs_api")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

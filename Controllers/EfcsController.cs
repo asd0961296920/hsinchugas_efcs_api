@@ -127,7 +127,7 @@ namespace hsinchugas_efcs_api.Controllers
                                 QUERY_DETAILNO = QUERY_DETAILNO, 
                                 QUERY_ISPAY = "Y",
                                 QUERY_BILLTYPE = "C",
-                                QUERY_BILLDATA = EfcsService.BuildBarcodeC(EfcsService.ToTaiwanDate6(EfcsService.GetNext20thDate()) +"311", item.CUST_NO.ToString(), item.RECEPT_NO.ToString(), EfcsService.ToTaiwanDate4(DateTime.Now.ToString("yyyyMM")) + "89" + EfcsService.PadLeftTo9(EfcsService.TotalAmount(item).ToString())), //CUST_NO + RECEPT_NO
+                                QUERY_BILLDATA = EfcsService.BuildBarcodeC(EfcsService.ToTaiwanDate6(EfcsService.GetNext20thDate()) +"311", item.CUST_NO.ToString(), item.RECEPT_NO.ToString(), EfcsService.ToTaiwanDate4(DateTime.Now.ToString("yyyyMM")) + "00" + EfcsService.PadLeftTo9(EfcsService.TotalAmount(item).ToString())), //CUST_NO + RECEPT_NO
                                 QUERY_AMOUNT = EfcsService.TotalAmount(item), //總金額
                                 QUERY_DATE = EfcsService.GetNext20thDate(), //繳費日期，無期限為99999999
                                 QUERY_DATA_NO = 1,
@@ -234,6 +234,8 @@ namespace hsinchugas_efcs_api.Controllers
             }
             catch (Exception ex)
             {
+                var EfcsService = new EfcsService(_config);
+                EfcsService.EFCS_LOG(_db, JsonSerializer.Serialize(request), ex.Message, "B207錯誤", HttpContext.Connection.RemoteIpAddress?.ToString(), "500");
                 // 一旦進 catch → 立刻終了，不會繼續往下跑
                 var error = new
                 {
@@ -458,6 +460,8 @@ namespace hsinchugas_efcs_api.Controllers
             }
             catch (Exception ex)
             {
+                var EfcsService = new EfcsService(_config);
+                EfcsService.EFCS_LOG(_db, JsonSerializer.Serialize(request), ex.Message, "B208錯誤", HttpContext.Connection.RemoteIpAddress?.ToString(), "500");
                 // 一旦進 catch → 立刻終了，不會繼續往下跑
                 var error =  new
                 {
@@ -655,6 +659,8 @@ namespace hsinchugas_efcs_api.Controllers
             }
             catch (Exception ex)
             {
+                var EfcsService = new EfcsService(_config);
+                EfcsService.EFCS_LOG(_db, JsonSerializer.Serialize(request), ex.Message, "B219錯誤", HttpContext.Connection.RemoteIpAddress?.ToString(), "500");
                 // 一旦進 catch → 立刻終了，不會繼續往下跑
                 var error = new
                 {
