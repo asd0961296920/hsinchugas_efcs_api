@@ -41,6 +41,67 @@ namespace hsinchugas_efcs_api.Service
             return BitConverter.ToString(checkCode).Replace("-", "").ToUpper();
         }
 
+        //B207銷帳資料
+        public string BuildBarcodeC(string userNo, string billFront, string billEnd, string amount)
+        {
+            // 第一段：10 碼，右補空白
+            string part1 = (userNo ?? "").PadRight(9, ' ');
+
+            // 第二段：20 碼 → 前段 + (0 補滿) + 後段
+            billFront = billFront ?? "";
+            billEnd = billEnd ?? "";
+
+            // STEP 1：合併後要變成 16 碼，不足在 billEnd 前補 0
+            string part2 = billFront + billEnd;
+
+            if (part2.Length < 16)
+            {
+                int needZero = 16 - part2.Length;
+                billEnd = new string('0', needZero) + billEnd;
+                part2 = billFront + billEnd;
+            }
+            if (part2.Length < 20)
+                part2 = part2.PadRight(20, ' ');
+
+
+            // 第三段：15 碼，右補空白
+            string part3 = (amount ?? "").PadRight(15, ' ');
+
+
+            // 最終組合（51 碼）
+            return part1 + part2 + part3;
+        }
+        //取出三段式條碼用戶代號
+        public string ExtractUserCode(string input)
+        {
+            if (string.IsNullOrWhiteSpace(input) || input.Length < 16)
+                return "";
+
+            // 用戶代號：從 index 9 開始，長度 7
+            return input.Substring(9, 7);
+        }
+        //取出三段式條碼帳單編號
+        public  string ExtractBillNumber(string input)
+        {
+            if (string.IsNullOrWhiteSpace(input) || input.Length < 20)
+                return "";
+
+            // 帳單編號從 index 16 開始，直到遇到空白
+            int start = 16;
+
+            // 找帳單編號的結束點（遇到空白就停止）
+            int end = start;
+            while (end < input.Length && input[end] != ' ')
+            {
+                end++;
+            }
+
+            // 取得帳單欄位
+            string billRaw = input.Substring(start, end - start);
+
+            // 去除左側 0
+            return billRaw.TrimStart('0');
+        }
 
 
         //B212 HEAD
@@ -302,8 +363,53 @@ VALUES
 
             return result.ToString("yyyyMMdd");
         }
+        //西元轉民國
+        public string ToTaiwanDate(string yyyyMMdd)
+        {
+            if (string.IsNullOrWhiteSpace(yyyyMMdd) || yyyyMMdd.Length != 8)
+                return "";
 
+            // 解析西元年月日
+            string y = yyyyMMdd.Substring(0, 4);
+            string m = yyyyMMdd.Substring(4, 2);
+            string d = yyyyMMdd.Substring(6, 2);
 
+            if (!int.TryParse(y, out int year))
+                return "";
+
+            // 民國年 = 西元年 - 1911
+            int twYear = year - 1911;
+
+            return twYear.ToString("000") + m + d;
+        }
+        //去頭的民國日期
+        public string ToTaiwanDate6(string yyyyMMdd)
+        {
+            string tw = this.ToTaiwanDate(yyyyMMdd); // 例如: 1130201
+
+            if (tw.Length == 7)
+                return tw.Substring(1); // 去掉第一碼 → 130201
+
+            return tw;
+        }
+        //4碼的民國日期
+        public string ToTaiwanDate4(string yyyyMM)
+        {
+            // 取年份與月份
+            int year = int.Parse(yyyyMM.Substring(0, 4));
+            string mm = yyyyMM.Substring(4, 2);
+
+            // 民國年 +1（你的需求），並取後兩碼
+            string tw2 = (year - 1911).ToString("000").Substring(1);
+
+            // 組出結果
+            return tw2 + mm;
+        }
+        //向前補0到9碼
+        public string PadLeftTo9(string input)
+        {
+            return (input ?? "").PadLeft(9, '0');
+        }
 
     }
 }

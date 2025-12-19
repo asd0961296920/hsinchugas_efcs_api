@@ -140,6 +140,7 @@ namespace hsinchugas_efcs_api.Model
     {
         /// <summary>跨系統介接戳記 (字串36)</summary>
         [JsonPropertyOrder(1)]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public string? REGISTERTOKEN { get; set; }
 
         /// <summary>總筆數 (數字2)</summary>

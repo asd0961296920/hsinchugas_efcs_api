@@ -126,8 +126,8 @@ namespace hsinchugas_efcs_api.Controllers
                             {
                                 QUERY_DETAILNO = QUERY_DETAILNO, 
                                 QUERY_ISPAY = "Y",
-                                QUERY_BILLTYPE = "B",
-                                QUERY_BILLDATA = item.CUST_NO.ToString() + item.RECEPT_NO.ToString(), //CUST_NO + RECEPT_NO
+                                QUERY_BILLTYPE = "C",
+                                QUERY_BILLDATA = EfcsService.BuildBarcodeC(EfcsService.ToTaiwanDate6(EfcsService.GetNext20thDate()) +"311", item.CUST_NO.ToString(), item.RECEPT_NO.ToString(), EfcsService.ToTaiwanDate4(DateTime.Now.ToString("yyyyMM")) + "89" + EfcsService.PadLeftTo9(EfcsService.TotalAmount(item).ToString())), //CUST_NO + RECEPT_NO
                                 QUERY_AMOUNT = EfcsService.TotalAmount(item), //總金額
                                 QUERY_DATE = EfcsService.GetNext20thDate(), //繳費日期，無期限為99999999
                                 QUERY_DATA_NO = 1,
@@ -289,13 +289,14 @@ namespace hsinchugas_efcs_api.Controllers
 
                 foreach (var item in request.DOCDATA.BODY.PAYDETAIL)
                 {
-                    var key = EfcsService.DecodeBillData2(item.BILLDATA);
+                    string BILLDATA_CUST_NO = EfcsService.ExtractUserCode(item.BILLDATA);
+                    string BILLDATA_RECEPT_NO = EfcsService.ExtractBillNumber(item.BILLDATA);
                     string sql3 = "SELECT * FROM RCPM005 WHERE RECEPT_NO = :RECEPT_NO AND CUST_NO = :CUST_NO ";
                     var RCPM005_SELECT = await conn.QueryFirstOrDefaultAsync(
                         sql3,
                         new {
-                            RECEPT_NO = key.RECEPT_NO,
-                            CUST_NO = key.CUST_NO
+                            RECEPT_NO = BILLDATA_RECEPT_NO,
+                            CUST_NO = BILLDATA_CUST_NO,
                         }   // ← 這裡放入你的變數
                     );
                     
@@ -307,8 +308,8 @@ namespace hsinchugas_efcs_api.Controllers
 
                             await conn.ExecuteAsync(sql2, new
                             {
-                                RECEPT_NO = key.RECEPT_NO,
-                                CUST_NO = key.CUST_NO,
+                                RECEPT_NO = BILLDATA_RECEPT_NO,
+                                CUST_NO = BILLDATA_CUST_NO,
                                 CARRIERID = EfcsService.GetCARRIERIDDate(item.EINV_CARDNO),
                                 FILE_DATE = EfcsService.GetTaiwanDate()
                             });
@@ -319,8 +320,8 @@ namespace hsinchugas_efcs_api.Controllers
 
                             await conn.ExecuteAsync(sql2, new
                             {
-                                RECEPT_NO = key.RECEPT_NO,
-                                CUST_NO = key.CUST_NO,
+                                RECEPT_NO = BILLDATA_RECEPT_NO,
+                                CUST_NO = BILLDATA_CUST_NO,
                                 FILE_DATE = EfcsService.GetTaiwanDate()
                             });
                         }
@@ -393,18 +394,18 @@ namespace hsinchugas_efcs_api.Controllers
                             PAY_CLRDATE = item.PAY_CLRDATE,
                             CHECKTYPE = item.CHECKTYPE,
                             BILLTYPE = item.BILLTYPE,
-                            BILLDATA = key.RECEPT_NO,
+                            BILLDATA = item.BILLDATA,
                             BILLBATCH = item.BILLBATCH,
                             EFCSSEQNO = item.EFCSSEQNO,
                             EINV_CARDNO = item.EINV_CARDNO,
                             CLEAR_DT = DateTime.Now,
-                            CUST_NO = key.CUST_NO,
+                            CUST_NO = BILLDATA_CUST_NO,
                         });
 
 
                         PAYDETAIL_RS.Add(new PAYDETAIL_RS
                         {
-                            DETAILNO = DETAILNO,   // 明細項流水號 01-99
+                            DETAILNO = item.DETAILNO,   // 明細項流水號 01-99
                             TXNAMOUNT = item.TXNAMOUNT,    // 繳費金額
                             BILLDATA = item.BILLDATA,   // 銷帳資料 (50)
                             BILLBATCH = item.BILLBATCH,   // 所屬期別 (10)
