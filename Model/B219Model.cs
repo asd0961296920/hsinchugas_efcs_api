@@ -8,7 +8,7 @@ namespace hsinchugas_efcs_api.Model
         public QUERYHEAD_B219 QUERYHEAD { get; set; }
 
         [JsonPropertyOrder(2)]
-        public QUERYDETAIL_B219 QUERYDETAIL { get; set; }
+        public List<QUERYDETAIL_B219> QUERYDETAIL { get; set; }
     }
 
     public class QUERYHEAD_B219
@@ -57,7 +57,7 @@ namespace hsinchugas_efcs_api.Model
         public QUERYHEAD_B219_RS QUERYHEAD { get; set; }
 
         [JsonPropertyOrder(2)]
-        public QUERYDETAIL_B219_RS QUERYDETAIL { get; set; }
+        public List<QUERYDETAIL_B219_RS> QUERYDETAIL { get; set; } = new List<QUERYDETAIL_B219_RS>();
     }
 
     public class QUERYHEAD_B219_RS

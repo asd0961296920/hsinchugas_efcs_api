@@ -510,9 +510,16 @@ namespace hsinchugas_efcs_api.Controllers
                 QUERYHEAD_B219_RS QUERYHEAD_B219_RS = new QUERYHEAD_B219_RS();
                 QUERYHEAD_B219_RS.TOTAL_COUNT = 0;
                 QUERYHEAD_B219_RS.TOTAL_AMOUNT = 0;
+
+                if (request.DOCDATA.BODY.QUERYDETAIL?.Count != 1)
+                {
+                    throw new Exception("QUERYDETAIL 必須為 1 筆");
+                }
+                var detail = request.DOCDATA.BODY.QUERYDETAIL[0];
+
                 //查詢邏輯
 
-                if (request.DOCDATA.BODY.QUERYDETAIL.QUERY_TYPE == "1" || request.DOCDATA.BODY.QUERYDETAIL.QUERY_TYPE == "2")
+                if (detail.QUERY_TYPE == "1" || detail.QUERY_TYPE == "2")
                 {
                     DateTime lastYear = DateTime.Now.AddYears(-1);
 
@@ -525,7 +532,7 @@ namespace hsinchugas_efcs_api.Controllers
                     using var conn = _db.CreateConnection();
                     string sql = @"SELECT * FROM RCPM005 WHERE CUST_NO = :QUERY_DATA1 AND (FILE_DATE is NULL OR FILE_DATE = 0)         
         AND RCV_YMD >= :rocDateNumber";
-                    var RCPM005 = await conn.QueryAsync(sql, new { QUERY_DATA1 = request.DOCDATA.BODY.QUERYDETAIL.QUERY_DATA1 , rocDateNumber  = rocDateNumber });
+                    var RCPM005 = await conn.QueryAsync(sql, new { QUERY_DATA1 = detail.QUERY_DATA1 , rocDateNumber  = rocDateNumber });
                     string sql2 = "SELECT * FROM EFCS_CONFIG";
                     var config = await conn.QueryFirstOrDefaultAsync(sql2);
                     if (RCPM005.Any())
@@ -534,8 +541,8 @@ namespace hsinchugas_efcs_api.Controllers
                         foreach (var item in RCPM005)
                         {
                             allmoney += EfcsService.TotalAmount(item);
-                            QUERYHEAD_B219_RS.TOTAL_COUNT += 1;
                         }
+                        QUERYHEAD_B219_RS.TOTAL_COUNT = 1;
                         QUERYHEAD_B219_RS.TOTAL_AMOUNT = allmoney;
                             DateTime tomorrow = DateTime.Now.AddDays(config.B219_Y_NEXT_TIME);
 
@@ -548,7 +555,7 @@ namespace hsinchugas_efcs_api.Controllers
                             NOTIFY_MSG = config.B219_TEXT,    // 通知訊息
                             TOTAL_AMOUNT = allmoney,             // 應繳總金額
                             QUERY_TYPE = "1",                // 查詢條件型態
-                            QUERY_DATA1 = request.DOCDATA.BODY.QUERYDETAIL.QUERY_DATA1         // 查詢條件 1
+                            QUERY_DATA1 = detail.QUERY_DATA1         // 查詢條件 1
                         };
                     }
                     else
@@ -561,7 +568,7 @@ namespace hsinchugas_efcs_api.Controllers
                             RTN_CODE = "6002",               // 作業結果
                             NEXT_FIRE_DATE = tomorrow.ToString("yyyyMMdd"),     // 下次詢問日 YYYYMMDD
                             QUERY_TYPE = "1",                // 查詢條件型態
-                            QUERY_DATA1 = request.DOCDATA.BODY.QUERYDETAIL.QUERY_DATA1         // 查詢條件 1
+                            QUERY_DATA1 = detail.QUERY_DATA1         // 查詢條件 1
                         };
                     }
 
@@ -622,7 +629,7 @@ namespace hsinchugas_efcs_api.Controllers
                     }
                 }
                 */
-                data.DOCDATA.BODY.QUERYDETAIL = QUERYDETAIL_B219_RS;
+                data.DOCDATA.BODY.QUERYDETAIL.Add(QUERYDETAIL_B219_RS) ;
                 data.DOCDATA.BODY.QUERYHEAD = QUERYHEAD_B219_RS;
                 data.DOCDATA.HEAD.ICCHK_CODE = "0000";
                 data.DOCDATA.HEAD.ICCHK_CODE_DESC = "請求成功";

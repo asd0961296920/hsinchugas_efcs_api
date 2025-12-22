@@ -407,7 +407,10 @@
             "$ref": "#/components/schemas/QUERYHEAD_B219"
           },
           "querydetail": {
-            "$ref": "#/components/schemas/QUERYDETAIL_B219"
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/QUERYDETAIL_B219"
+            }
           }
         }
       },
