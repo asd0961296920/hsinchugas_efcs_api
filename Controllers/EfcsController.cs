@@ -144,8 +144,8 @@ namespace hsinchugas_efcs_api.Controllers
                 }
                 else
                 {
-                    data.DOCDATA.HEAD.ICCHK_CODE = "0000";
-                    data.DOCDATA.HEAD.ICCHK_CODE_DESC = "請求成功";
+                    data.DOCDATA.HEAD.ICCHK_CODE = "I300";
+                    data.DOCDATA.HEAD.ICCHK_CODE_DESC = "查詢條件型態值不符合";
                 }
                     /*
                     if (request.DOCDATA.BODY.QUERY_TYPE == "2")
@@ -508,8 +508,8 @@ namespace hsinchugas_efcs_api.Controllers
                 var QUERYDETAIL_B219_RS = new QUERYDETAIL_B219_RS();
                 data.DOCDATA.HEAD.TXN_DATETIME = txnDatetime;
                 QUERYHEAD_B219_RS QUERYHEAD_B219_RS = new QUERYHEAD_B219_RS();
-                QUERYHEAD_B219_RS.TOTAL_COUNT = 0;
-                QUERYHEAD_B219_RS.TOTAL_AMOUNT = 0;
+                QUERYHEAD_B219_RS.TOTAL_COUNT = 1;
+
 
                 if (request.DOCDATA.BODY.QUERYDETAIL?.Count != 1)
                 {
@@ -535,6 +535,35 @@ namespace hsinchugas_efcs_api.Controllers
                     var RCPM005 = await conn.QueryAsync(sql, new { QUERY_DATA1 = detail.QUERY_DATA1 , rocDateNumber  = rocDateNumber });
                     string sql2 = "SELECT * FROM EFCS_CONFIG";
                     var config = await conn.QueryFirstOrDefaultAsync(sql2);
+
+
+                    string sql_u = @"SELECT * FROM RCPM001 WHERE CUST_NO = :QUERY_DATA1 ";
+                    var RCPM001 = await conn.QueryFirstOrDefaultAsync(sql_u, new { QUERY_DATA1 = detail.QUERY_DATA1 });
+
+                    string sql_u2 = @"SELECT * FROM RCPM005 WHERE CUST_NO = :QUERY_DATA1 ";
+                    var RCPM005_u = await conn.QueryFirstOrDefaultAsync(sql_u2, new { QUERY_DATA1 = detail.QUERY_DATA1 });
+
+                    if (RCPM001 == null && RCPM005_u == null)
+                    {
+                        data.DOCDATA.HEAD.ICCHK_CODE = "6002";
+                        data.DOCDATA.HEAD.ICCHK_CODE_DESC = "查尋條件資料不存在";
+                    }
+                    else
+                    {
+                        if (!RCPM005.Any())
+                        {
+                            // 沒查到資料
+                            data.DOCDATA.HEAD.ICCHK_CODE = "6001";
+                            data.DOCDATA.HEAD.ICCHK_CODE_DESC = "查無欠費資料";
+                        }
+                        else
+                        {
+                            // 有查到資料
+                            data.DOCDATA.HEAD.ICCHK_CODE = "0000";
+                            data.DOCDATA.HEAD.ICCHK_CODE_DESC = "請求成功";
+                        }
+                    }
+
                     if (RCPM005.Any())
                     {
                         int allmoney = 0;
@@ -542,9 +571,8 @@ namespace hsinchugas_efcs_api.Controllers
                         {
                             allmoney += EfcsService.TotalAmount(item);
                         }
-                        QUERYHEAD_B219_RS.TOTAL_COUNT = 1;
-                        QUERYHEAD_B219_RS.TOTAL_AMOUNT = allmoney;
-                            DateTime tomorrow = DateTime.Now.AddDays(config.B219_Y_NEXT_TIME);
+                        
+                        DateTime tomorrow = DateTime.Now.AddDays(config.B219_Y_NEXT_TIME);
 
 
                         QUERYDETAIL_B219_RS = new QUERYDETAIL_B219_RS
@@ -574,65 +602,70 @@ namespace hsinchugas_efcs_api.Controllers
 
 
                 }
-                /*
-                if (request.DOCDATA.BODY.QUERYDETAIL.QUERY_TYPE == "2")
+                else
                 {
-                    using var conn = _db.CreateConnection();
-                    string sq2 = "SELECT * FROM RCPM001 WHERE NAME = :QUERY_DATA2";
-                    var RCPM001 = await conn.QueryFirstOrDefaultAsync(sq2, new { QUERY_DATA2 = request.DOCDATA.BODY.QUERYDETAIL.QUERY_DATA2 });
-                    if (RCPM001 != null)
-                    {
-                        string sql = "SELECT * FROM RCPM005 WHERE CUST_NO = :QUERY_DATA1 AND (CLEAR_DT is NULL OR CLEAR_DT = 0)";
-                        var RCPM005 = await conn.QueryAsync(sql, new { QUERY_DATA1 = RCPM001.CUST_NO });
-                        string sql2 = "SELECT * FROM EFCS_CONFIG";
-                        var config = await conn.QueryFirstOrDefaultAsync(sql2);
-                        if (RCPM005.Any())
-                        {
-                            int allmoney = 0;
-                            foreach (var item in RCPM005)
-                            {
-                                allmoney += EfcsService.TotalAmount(item);
-                                QUERYHEAD_B219_RS.TOTAL_COUNT += 1;
-                            }
-                            QUERYHEAD_B219_RS.TOTAL_AMOUNT = allmoney;
-                            DateTime tomorrow = DateTime.Now.AddDays(config.B219_Y_NEXT_TIME);
-
-
-
-                            QUERYDETAIL_B219_RS = new QUERYDETAIL_B219_RS
-                            {
-                                DETAILNO = "01",                 // 流水號 01–99
-                                RTN_CODE = "0000",               // 作業結果
-                                NEXT_FIRE_DATE = tomorrow.ToString("yyyyMMdd"),     // 下次詢問日 YYYYMMDD
-                                NOTIFY_MSG = config.B219_TEXT,    // 通知訊息
-                                TOTAL_AMOUNT = allmoney,             // 應繳總金額
-                                QUERY_TYPE = "1",                // 查詢條件型態
-                                QUERY_DATA1 = request.DOCDATA.BODY.QUERYDETAIL.QUERY_DATA1,         // 查詢條件 1
-                                QUERY_DATA2 = RCPM001.NAME         // 查詢條件 1
-                            };
-                        }
-                        else
-                        {
-
-                            DateTime tomorrow = DateTime.Now.AddDays(config.B219_N_NEXT_TIME);
-                            QUERYDETAIL_B219_RS = new QUERYDETAIL_B219_RS
-                            {
-                                DETAILNO = "01",                 // 流水號 01–99
-                                RTN_CODE = "6002",               // 作業結果
-                                NEXT_FIRE_DATE = tomorrow.ToString("yyyyMMdd"),     // 下次詢問日 YYYYMMDD
-                                QUERY_TYPE = "1",                // 查詢條件型態
-                                QUERY_DATA1 = request.DOCDATA.BODY.QUERYDETAIL.QUERY_DATA1,
-                                QUERY_DATA2 = RCPM001.NAME  // 查詢條件 2
-                            };
-                        }
-
-                    }
+                    data.DOCDATA.HEAD.ICCHK_CODE = "I300";
+                    data.DOCDATA.HEAD.ICCHK_CODE_DESC = "查詢條件型態值不符合";
                 }
-                */
-                data.DOCDATA.BODY.QUERYDETAIL.Add(QUERYDETAIL_B219_RS) ;
+                    /*
+                    if (request.DOCDATA.BODY.QUERYDETAIL.QUERY_TYPE == "2")
+                    {
+                        using var conn = _db.CreateConnection();
+                        string sq2 = "SELECT * FROM RCPM001 WHERE NAME = :QUERY_DATA2";
+                        var RCPM001 = await conn.QueryFirstOrDefaultAsync(sq2, new { QUERY_DATA2 = request.DOCDATA.BODY.QUERYDETAIL.QUERY_DATA2 });
+                        if (RCPM001 != null)
+                        {
+                            string sql = "SELECT * FROM RCPM005 WHERE CUST_NO = :QUERY_DATA1 AND (CLEAR_DT is NULL OR CLEAR_DT = 0)";
+                            var RCPM005 = await conn.QueryAsync(sql, new { QUERY_DATA1 = RCPM001.CUST_NO });
+                            string sql2 = "SELECT * FROM EFCS_CONFIG";
+                            var config = await conn.QueryFirstOrDefaultAsync(sql2);
+                            if (RCPM005.Any())
+                            {
+                                int allmoney = 0;
+                                foreach (var item in RCPM005)
+                                {
+                                    allmoney += EfcsService.TotalAmount(item);
+                                    QUERYHEAD_B219_RS.TOTAL_COUNT += 1;
+                                }
+                                QUERYHEAD_B219_RS.TOTAL_AMOUNT = allmoney;
+                                DateTime tomorrow = DateTime.Now.AddDays(config.B219_Y_NEXT_TIME);
+
+
+
+                                QUERYDETAIL_B219_RS = new QUERYDETAIL_B219_RS
+                                {
+                                    DETAILNO = "01",                 // 流水號 01–99
+                                    RTN_CODE = "0000",               // 作業結果
+                                    NEXT_FIRE_DATE = tomorrow.ToString("yyyyMMdd"),     // 下次詢問日 YYYYMMDD
+                                    NOTIFY_MSG = config.B219_TEXT,    // 通知訊息
+                                    TOTAL_AMOUNT = allmoney,             // 應繳總金額
+                                    QUERY_TYPE = "1",                // 查詢條件型態
+                                    QUERY_DATA1 = request.DOCDATA.BODY.QUERYDETAIL.QUERY_DATA1,         // 查詢條件 1
+                                    QUERY_DATA2 = RCPM001.NAME         // 查詢條件 1
+                                };
+                            }
+                            else
+                            {
+
+                                DateTime tomorrow = DateTime.Now.AddDays(config.B219_N_NEXT_TIME);
+                                QUERYDETAIL_B219_RS = new QUERYDETAIL_B219_RS
+                                {
+                                    DETAILNO = "01",                 // 流水號 01–99
+                                    RTN_CODE = "6002",               // 作業結果
+                                    NEXT_FIRE_DATE = tomorrow.ToString("yyyyMMdd"),     // 下次詢問日 YYYYMMDD
+                                    QUERY_TYPE = "1",                // 查詢條件型態
+                                    QUERY_DATA1 = request.DOCDATA.BODY.QUERYDETAIL.QUERY_DATA1,
+                                    QUERY_DATA2 = RCPM001.NAME  // 查詢條件 2
+                                };
+                            }
+
+                        }
+                    }
+                    */
+                data.DOCDATA.BODY.QUERYDETAIL.Add(QUERYDETAIL_B219_RS);
                 data.DOCDATA.BODY.QUERYHEAD = QUERYHEAD_B219_RS;
-                data.DOCDATA.HEAD.ICCHK_CODE = "0000";
-                data.DOCDATA.HEAD.ICCHK_CODE_DESC = "請求成功";
+
+
 
 
                 //收尾

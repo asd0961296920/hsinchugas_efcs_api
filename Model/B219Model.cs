@@ -66,9 +66,6 @@ namespace hsinchugas_efcs_api.Model
         [JsonPropertyOrder(1)]
         public int TOTAL_COUNT { get; set; }
 
-        /// <summary>總金額 數字(2)</summary>
-        [JsonPropertyOrder(1)]
-        public int TOTAL_AMOUNT { get; set; }
     }
 
     public class QUERYDETAIL_B219_RS
