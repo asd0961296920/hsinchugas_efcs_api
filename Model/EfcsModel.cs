@@ -99,6 +99,25 @@ namespace hsinchugas_efcs_api.Model
     }
 
 
+    
+
+    public class PaymentStatusRq
+    {
+        public string CUST_NO { get; set; }
+        public decimal RECEPT_NO { get; set; }
+    }
+
+
+
+
+    public class PaymentStatusRs
+    {
+        public string CUST_NO { get; set; }
+        public decimal RECEPT_NO { get; set; }
+        public bool status { get; set; }
+    }
+
+
 
 
 

@@ -87,7 +87,48 @@ namespace hsinchugas_efcs_api.Controllers
         }
 
 
+        [HttpPost("api/mis/payment/status")]
+        public async Task<IActionResult> Payment_status([FromBody] PaymentStatusRq request)
+        {
+            using var conn = _db.CreateConnection();
+            string sql2 = "SELECT * FROM RCPM005 WHERE  RECEPT_NO = :RECEPT_NO AND CUST_NO = :CUST_NO";
+            var data = await conn.QueryFirstOrDefaultAsync(sql2, new
+            {
+                RECEPT_NO = request.RECEPT_NO,
+                CUST_NO = request.CUST_NO
+            });
 
+            PaymentStatusRs PaymentStatusRs = new PaymentStatusRs();
+
+
+            PaymentStatusRs.CUST_NO = data.CUST_NO;
+            PaymentStatusRs.RECEPT_NO = data.RECEPT_NO;
+            if(data.FILE_DATE != null)
+            {
+                PaymentStatusRs.status = true;
+            }
+            else
+            {
+                PaymentStatusRs.status = false;
+            }
+
+
+
+
+
+
+
+
+                PaymentStatusRs.CUST_NO = data.CUST_NO;
+
+
+
+
+            //string docData = JsonSerializer.Serialize(PaymentStatusRs);
+
+
+            return Ok(PaymentStatusRs);
+        }
 
 
 
