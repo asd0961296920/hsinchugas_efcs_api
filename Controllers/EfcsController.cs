@@ -306,25 +306,25 @@ namespace hsinchugas_efcs_api.Controllers
                     {
                         if(EfcsService.GetCARRIERIDDate(item.EINV_CARDNO) != null)
                         {
-                            string sql2 = @"UPDATE RCPM005 SET  CARRIERID = :CARRIERID ,FILE_DATE = :FILE_DATE WHERE  RECEPT_NO = :RECEPT_NO AND CUST_NO = :CUST_NO";
+                            string sql2 = @"UPDATE RCPM005 SET  CARRIERID = :CARRIERID ,EFCS208 = :EFCS208 WHERE  RECEPT_NO = :RECEPT_NO AND CUST_NO = :CUST_NO";
 
                             await conn.ExecuteAsync(sql2, new
                             {
                                 RECEPT_NO = BILLDATA_RECEPT_NO,
                                 CUST_NO = BILLDATA_CUST_NO,
                                 CARRIERID = EfcsService.GetCARRIERIDDate(item.EINV_CARDNO),
-                                FILE_DATE = EfcsService.GetTaiwanDate()
+                                EFCS208 = EfcsService.GetTaiwanDate()
                             });
                         }
                         else
                         {
-                            string sql2 = @"UPDATE RCPM005 SET  FILE_DATE = :FILE_DATE WHERE  RECEPT_NO = :RECEPT_NO AND CUST_NO = :CUST_NO";
+                            string sql2 = @"UPDATE RCPM005 SET  EFCS208 = :EFCS208 WHERE  RECEPT_NO = :RECEPT_NO AND CUST_NO = :CUST_NO";
 
                             await conn.ExecuteAsync(sql2, new
                             {
                                 RECEPT_NO = BILLDATA_RECEPT_NO,
                                 CUST_NO = BILLDATA_CUST_NO,
-                                FILE_DATE = EfcsService.GetTaiwanDate()
+                                EFCS208 = EfcsService.GetTaiwanDate()
                             });
                         }
 

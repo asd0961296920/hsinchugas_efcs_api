@@ -1,8 +1,9 @@
+using Dapper;
 using hsinchugas_efcs_api.Model;
 using hsinchugas_efcs_api.Service;
+using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
-using Dapper;
 
 namespace hsinchugas_efcs_api.Controllers
 {
@@ -87,10 +88,12 @@ namespace hsinchugas_efcs_api.Controllers
         }
 
 
-        [HttpPost("api/mis/payment/status")]
-        public async Task<IActionResult> Payment_status([FromBody] PaymentStatusRq request)
+        [HttpGet("api/mis/payment/status")]
+        public async Task<IActionResult> Payment_status([FromQuery] PaymentStatusRq request)
         {
-            using var conn = _db.CreateConnection();
+            try
+            {
+                using var conn = _db.CreateConnection();
             string sql2 = "SELECT * FROM RCPM005 WHERE  RECEPT_NO = :RECEPT_NO AND CUST_NO = :CUST_NO";
             var data = await conn.QueryFirstOrDefaultAsync(sql2, new
             {
@@ -100,34 +103,51 @@ namespace hsinchugas_efcs_api.Controllers
 
             PaymentStatusRs PaymentStatusRs = new PaymentStatusRs();
 
-
-            PaymentStatusRs.CUST_NO = data.CUST_NO;
-            PaymentStatusRs.RECEPT_NO = data.RECEPT_NO;
-            if(data.FILE_DATE != null)
+            if (data != null)
             {
-                PaymentStatusRs.status = true;
+                PaymentStatusRs.CUST_NO = data.CUST_NO;
+                PaymentStatusRs.RECEPT_NO = data.RECEPT_NO;
+                if (data.FILE_DATE != null || data.EFCS208 != null)
+                {
+                    PaymentStatusRs.status = true;
+                }
+                else
+                {
+                    PaymentStatusRs.status = false;
+                }
             }
             else
             {
+                PaymentStatusRs.CUST_NO = "查無資料";
+                PaymentStatusRs.RECEPT_NO = 0;
                 PaymentStatusRs.status = false;
             }
 
 
 
+                //string docData = JsonSerializer.Serialize(PaymentStatusRs);
 
 
+                return Ok(PaymentStatusRs);
 
-
-
-                PaymentStatusRs.CUST_NO = data.CUST_NO;
-
-
-
-
-            //string docData = JsonSerializer.Serialize(PaymentStatusRs);
-
-
-            return Ok(PaymentStatusRs);
+            }
+            catch (Exception ex)
+            {
+                EfcsService.EFCS_LOG(_db, "", ex.Message, "新竹瓦斯查詢帳單是否繳費失敗", Request.GetDisplayUrl(), "500");
+                // 一旦進 catch → 立刻終了，不會繼續往下跑
+                var error = new
+                {
+                    DOCDATA = new
+                    {
+                        HEAD = new
+                        {
+                            ICCHK_CODE = "S999",
+                            ICCHK_CODE_DESC = ex.Message
+                        }
+                    }
+                };
+                return Ok(error);
+            }
         }
 
 
