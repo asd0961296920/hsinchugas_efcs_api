@@ -84,7 +84,7 @@ namespace hsinchugas_efcs_api.Controllers
 
 
 
-                    string sql = @"SELECT * FROM RCPM005 WHERE CUST_NO = :QUERY_DATA1 AND (FILE_DATE is NULL OR FILE_DATE = 0)   
+                    string sql = @"SELECT * FROM RCPM005 WHERE CUST_NO = :QUERY_DATA1 AND (FILE_DATE is NULL OR FILE_DATE = 0) AND (EFCS208 is NULL OR EFCS208 = 0)  
         AND RCV_YMD >= :rocDateNumber";
                     var RCPM005 =  await conn.QueryAsync(sql, new { QUERY_DATA1 = request.DOCDATA.BODY.QUERY_DATA1 , rocDateNumber = rocDateNumber });
 
@@ -530,7 +530,7 @@ namespace hsinchugas_efcs_api.Controllers
                     int rocDateNumber = int.Parse($"{rocYear:000}{lastYear.Month:00}{lastYear.Day:00}");
 
                     using var conn = _db.CreateConnection();
-                    string sql = @"SELECT * FROM RCPM005 WHERE CUST_NO = :QUERY_DATA1 AND (FILE_DATE is NULL OR FILE_DATE = 0)         
+                    string sql = @"SELECT * FROM RCPM005 WHERE CUST_NO = :QUERY_DATA1 AND (FILE_DATE is NULL OR FILE_DATE = 0) AND (EFCS208 is NULL OR EFCS208 = 0)        
         AND RCV_YMD >= :rocDateNumber";
                     var RCPM005 = await conn.QueryAsync(sql, new { QUERY_DATA1 = detail.QUERY_DATA1 , rocDateNumber  = rocDateNumber });
                     string sql2 = "SELECT * FROM EFCS_CONFIG";
