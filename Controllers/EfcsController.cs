@@ -362,7 +362,8 @@ namespace hsinchugas_efcs_api.Controllers
                         EFCSSEQNO,
                         EINV_CARDNO,
                         CLEAR_DT,
-                        CUST_NO
+                        CUST_NO,
+                        RECEPT_NO
                     )
                     VALUES
                     (
@@ -381,7 +382,8 @@ namespace hsinchugas_efcs_api.Controllers
                         :EFCSSEQNO,
                         :EINV_CARDNO,
                         :CLEAR_DT,
-                        :CUST_NO
+                        :CUST_NO,
+                        :RECEPT_NO
                     )";
 
                         await conn.ExecuteAsync(sql, new
@@ -402,6 +404,7 @@ namespace hsinchugas_efcs_api.Controllers
                             EINV_CARDNO = item.EINV_CARDNO,
                             CLEAR_DT = DateTime.Now,
                             CUST_NO = BILLDATA_CUST_NO,
+                            RECEPT_NO = BILLDATA_RECEPT_NO
                         });
 
 
