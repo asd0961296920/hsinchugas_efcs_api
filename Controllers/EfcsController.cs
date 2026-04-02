@@ -301,7 +301,8 @@ namespace hsinchugas_efcs_api.Controllers
                             CUST_NO = BILLDATA_CUST_NO,
                         }   // ← 這裡放入你的變數
                     );
-                    
+
+                    bool EINV_CARDNO = false;
                     if (RCPM005_SELECT != null)
                     {
                         if(EfcsService.GetCARRIERIDDate(item.EINV_CARDNO) != null)
@@ -315,6 +316,7 @@ namespace hsinchugas_efcs_api.Controllers
                                 CARRIERID = EfcsService.GetCARRIERIDDate(item.EINV_CARDNO),
                                 EFCS208 = EfcsService.GetTaiwanDate()
                             });
+                            EINV_CARDNO = true;
                         }
                         else
                         {
@@ -326,6 +328,7 @@ namespace hsinchugas_efcs_api.Controllers
                                 CUST_NO = BILLDATA_CUST_NO,
                                 EFCS208 = EfcsService.GetTaiwanDate()
                             });
+                            EINV_CARDNO = false;
                         }
 
                     }
@@ -407,7 +410,8 @@ namespace hsinchugas_efcs_api.Controllers
                             RECEPT_NO = BILLDATA_RECEPT_NO
                         });
 
-
+                    if (EINV_CARDNO)
+                    {
                         PAYDETAIL_RS.Add(new PAYDETAIL_RS
                         {
                             DETAILNO = item.DETAILNO,   // 明細項流水號 01-99
@@ -416,9 +420,35 @@ namespace hsinchugas_efcs_api.Controllers
                             BILLBATCH = item.BILLBATCH,   // 所屬期別 (10)
                             APRTN_CODE = "0000",   // 處理結果代碼
                             ERRORDESC = null,   // 錯誤敘述
-                            PAY_DATA_NO = 0    // 結果參數數目 (1 digit)
-
+                            PAY_DATA_NO = 3,    // 結果參數數目 (1 digit)
+                            PAY_DISPNAME1 = "共通性載具",
+                            PAY_DISPDATA1 = item.EINV_CARDNO,
+                            PAY_DISPNAME2 = "載具類別",
+                            PAY_DISPDATA2 = "",
+                            PAY_DISPNAME3 = "載具號碼",
+                            PAY_DISPDATA3 = "",
                         });
+                    }
+                    else
+                    {
+                        PAYDETAIL_RS.Add(new PAYDETAIL_RS
+                        {
+                            DETAILNO = item.DETAILNO,   // 明細項流水號 01-99
+                            TXNAMOUNT = item.TXNAMOUNT,    // 繳費金額
+                            BILLDATA = item.BILLDATA,   // 銷帳資料 (50)
+                            BILLBATCH = item.BILLBATCH,   // 所屬期別 (10)
+                            APRTN_CODE = "0000",   // 處理結果代碼
+                            ERRORDESC = null,   // 錯誤敘述
+                            PAY_DATA_NO = 3,    // 結果參數數目 (1 digit)
+                            PAY_DISPNAME1 = "共通性載具",
+                            PAY_DISPDATA1 = "",
+                            PAY_DISPNAME2 = "載具類別",
+                            PAY_DISPDATA2 = "ED0014",
+                            PAY_DISPNAME3 = "載具號碼",
+                            PAY_DISPDATA3 = "",
+                        });
+                    }
+
 
 
 
