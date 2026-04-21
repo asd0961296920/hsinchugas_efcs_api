@@ -80,7 +80,8 @@ namespace hsinchugas_efcs_api.Controllers
                         RENT_TAX,
                         BASE_AMT,
                         BASE_TAX,
-                        ADJ_CHARGE
+                        ADJ_CHARGE,
+                        CARRIERID_O
                     )
                     VALUES
                     (
@@ -95,7 +96,8 @@ namespace hsinchugas_efcs_api.Controllers
                         :RENT_TAX,
                         :BASE_AMT,
                         :BASE_TAX,
-                        :ADJ_CHARGE
+                        :ADJ_CHARGE,
+                        :CARRIERID_O
                     )";
 
                     var affectedRows = await conn.ExecuteAsync(sql3, new
@@ -111,7 +113,8 @@ namespace hsinchugas_efcs_api.Controllers
                         RENT_TAX = sync.RENT_TAX,
                         BASE_AMT = sync.BASE_AMT,
                         BASE_TAX = sync.BASE_TAX,
-                        ADJ_CHARGE = sync.ADJ_CHARGE
+                        ADJ_CHARGE = sync.ADJ_CHARGE,
+                        CARRIERID_O = sync.CARRIERID_O,
                     });
                     number++;
                 }
@@ -193,7 +196,8 @@ namespace hsinchugas_efcs_api.Controllers
                         RENT_TAX,
                         BASE_AMT,
                         BASE_TAX,
-                        ADJ_CHARGE
+                        ADJ_CHARGE,
+                        CARRIERID_O
                     )
                     VALUES
                     (
@@ -208,7 +212,8 @@ namespace hsinchugas_efcs_api.Controllers
                         :RENT_TAX,
                         :BASE_AMT,
                         :BASE_TAX,
-                        :ADJ_CHARGE
+                        :ADJ_CHARGE,
+                        :CARRIERID_O
                     )";
 
                         var affectedRows = await conn.ExecuteAsync(sql3, new
@@ -224,7 +229,8 @@ namespace hsinchugas_efcs_api.Controllers
                             RENT_TAX = sync.RENT_TAX,
                             BASE_AMT = sync.BASE_AMT,
                             BASE_TAX = sync.BASE_TAX,
-                            ADJ_CHARGE = sync.ADJ_CHARGE
+                            ADJ_CHARGE = sync.ADJ_CHARGE,
+                            CARRIERID_O = sync.CARRIERID_O,
                         });
                         number++;
                     }
