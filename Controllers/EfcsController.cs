@@ -332,10 +332,27 @@ namespace hsinchugas_efcs_api.Controllers
                         }
 
                     }
-                    
+                    else
+                    {
+                        EfcsService.EFCS_LOG(_db, JsonSerializer.Serialize(request), "錯誤,查無帳單"+ item.BILLDATA, "B208輸出", HttpContext.Connection.RemoteIpAddress?.ToString(), "500");
+                        // 一旦進 catch → 立刻終了，不會繼續往下跑
+                        var error = new
+                        {
+                            DOCDATA = new
+                            {
+                                HEAD = new
+                                {
+                                    ICCHK_CODE = "S999",
+                                    ICCHK_CODE_DESC = "錯誤,查無帳單"
+                                }
+                            }
+                        };
+                        return Ok(error);
+                    }
 
 
-                    number++;
+
+                        number++;
                     string DETAILNO = "";
 
                     if (number < 10)
@@ -445,7 +462,7 @@ namespace hsinchugas_efcs_api.Controllers
                             PAY_DISPNAME2 = "載具類別",
                             PAY_DISPDATA2 = "ED0014",
                             PAY_DISPNAME3 = "載具號碼",
-                            PAY_DISPDATA3 = "",
+                            PAY_DISPDATA3 = RCPM005_SELECT.CARRIERID_O ?? "",
                         });
                     }
 
