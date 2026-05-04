@@ -1,6 +1,9 @@
 using Dapper;
+using Dapper.Oracle;
 using hsinchugas_efcs_api.Model;
+using Oracle.ManagedDataAccess.Client;
 using System;
+using System.Data;
 using System.Globalization;
 using System.Runtime.Intrinsics.Arm;
 using System.Security.Cryptography;
@@ -329,27 +332,25 @@ namespace hsinchugas_efcs_api.Service
               + (item.ADJ_CHARGE ?? 0);
         }
 
-        public static async void  EFCS_LOG(OracleDbContext db,string Log,string return_log,string rmark,string url,string code)
+        public static async Task EFCS_LOG(OracleDbContext db, string Log, string return_log, string rmark, string url, string code)
         {
             using var conn = db.CreateConnection();
             string sql = @"
 INSERT INTO EFCS_LOG 
-    (Add_Date, Json_Log, url, rmark, return_code,Return_Log)
+    (Add_Date, Json_Log, url, rmark, return_code, Return_Log)
 VALUES 
     (:Add_Date, :Json_Log, :url, :rmark, :return_code, :Return_Log)";
 
-            await conn.ExecuteAsync(sql, new
-            {
-                Add_Date = DateTime.Now,
-                Json_Log = Log,
-                url = url,
-                rmark = rmark,
-                return_code = code,
-                Return_Log = return_log
-            });
+            var p = new OracleDynamicParameters();
+            p.Add("Add_Date", DateTime.Now, OracleMappingType.Date, ParameterDirection.Input);
+            p.Add("Json_Log", Log, OracleMappingType.Clob, ParameterDirection.Input);
+            p.Add("url", url, OracleMappingType.Varchar2, ParameterDirection.Input);
+            p.Add("rmark", rmark, OracleMappingType.Varchar2, ParameterDirection.Input);
+            p.Add("return_code", code, OracleMappingType.Varchar2, ParameterDirection.Input);
+            p.Add("Return_Log", return_log, OracleMappingType.Clob, ParameterDirection.Input);
 
+            await conn.ExecuteAsync(sql, p);
         }
-
         public static string GetNext20thDate()
         {
             DateTime today = DateTime.Now;

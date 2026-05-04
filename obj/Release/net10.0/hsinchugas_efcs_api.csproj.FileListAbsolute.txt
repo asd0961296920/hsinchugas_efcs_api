@@ -49,3 +49,4 @@ C:\Users\MassTech\Desktop\專案\hsinchugas_efcs_api\bin\Release\net10.0\runtime
 C:\Users\MassTech\Desktop\專案\hsinchugas_efcs_api\bin\Release\net10.0\runtimes\osx\lib\net8.0\System.DirectoryServices.Protocols.dll
 C:\Users\MassTech\Desktop\專案\hsinchugas_efcs_api\bin\Release\net10.0\runtimes\win\lib\net8.0\System.DirectoryServices.Protocols.dll
 C:\Users\MassTech\Desktop\專案\hsinchugas_efcs_api\obj\Release\net10.0\hsinchugas_efcs_api.sourcelink.json
+C:\Users\MassTech\Desktop\專案\hsinchugas_efcs_api\bin\Release\net10.0\Dapper.Oracle.dll

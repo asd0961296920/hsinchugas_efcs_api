@@ -6,6 +6,7 @@ C:\Users\MassTech\Desktop\專案\hsinchugas_efcs_api\obj\Release\net10.0\PubTmp\
 C:\Users\MassTech\Desktop\專案\hsinchugas_efcs_api\obj\Release\net10.0\PubTmp\Out\hsinchugas_efcs_api.runtimeconfig.json
 C:\Users\MassTech\Desktop\專案\hsinchugas_efcs_api\obj\Release\net10.0\PubTmp\Out\hsinchugas_efcs_api.pdb
 C:\Users\MassTech\Desktop\專案\hsinchugas_efcs_api\obj\Release\net10.0\PubTmp\Out\Dapper.dll
+C:\Users\MassTech\Desktop\專案\hsinchugas_efcs_api\obj\Release\net10.0\PubTmp\Out\Dapper.Oracle.dll
 C:\Users\MassTech\Desktop\專案\hsinchugas_efcs_api\obj\Release\net10.0\PubTmp\Out\Devart.Data.dll
 C:\Users\MassTech\Desktop\專案\hsinchugas_efcs_api\obj\Release\net10.0\PubTmp\Out\Devart.Data.Oracle.dll
 C:\Users\MassTech\Desktop\專案\hsinchugas_efcs_api\obj\Release\net10.0\PubTmp\Out\Devart.Data.Oracle.Entity.EFCore.dll

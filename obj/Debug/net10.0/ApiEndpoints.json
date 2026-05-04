@@ -137,6 +137,73 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "hsinchugas_efcs_api.Controllers.MISController",
+    "Method": "Payment_status",
+    "RelativePath": "api/mis/payment/status",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "CUST_NO",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "RECEPT_NO",
+        "Type": "System.Decimal",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "hsinchugas_efcs_api.Controllers.SyncController",
+    "Method": "AsyncRCPM001",
+    "RelativePath": "api/sync/RCPM001",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "hsinchugas_efcs_api.Controllers.SyncController",
+    "Method": "AsyncRCPM005",
+    "RelativePath": "api/sync/RCPM005",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "hsinchugas_efcs_api.Controllers.SyncController",
+    "Method": "AsyncRCPM005day",
+    "RelativePath": "api/sync/RCPM005/day",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "day",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "hsinchugas_efcs_api.Controllers.SyncController",
+    "Method": "AsyncRCPM005upd",
+    "RelativePath": "api/sync/RCPM005/upd",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "hsinchugas_efcs_api.Controllers.WeatherForecastController",
     "Method": "Get",
     "RelativePath": "GetWeatherForecast",
