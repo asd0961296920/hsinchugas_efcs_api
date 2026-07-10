@@ -121,7 +121,6 @@ namespace hsinchugas_efcs_api.Controllers
                         REMARK4R5,
                         SERVICE_TAX,
                         SERVICE_AMT,
-                        EFCS208,
                         SERVICE2_TAX,
                         SERVICE2_AMT
                     )
@@ -178,7 +177,6 @@ namespace hsinchugas_efcs_api.Controllers
                         :REMARK4R5,
                         :SERVICE_TAX,
                         :SERVICE_AMT,
-                        :EFCS208,
                         :SERVICE2_TAX,
                         :SERVICE2_AMT
                     )";
@@ -235,7 +233,6 @@ namespace hsinchugas_efcs_api.Controllers
                             REMARK4R5 = sync.REMARK4R5,
                             SERVICE_TAX = sync.SERVICE_TAX,
                             SERVICE_AMT = sync.SERVICE_AMT,
-                            EFCS208 = sync.EFCS208,
                             SERVICE2_TAX = sync.SERVICE2_TAX,
                             SERVICE2_AMT = sync.SERVICE2_AMT
                         });
@@ -360,7 +357,6 @@ namespace hsinchugas_efcs_api.Controllers
                         REMARK4R5,
                         SERVICE_TAX,
                         SERVICE_AMT,
-                        EFCS208,
                         SERVICE2_TAX,
                         SERVICE2_AMT
                     )
@@ -417,7 +413,6 @@ namespace hsinchugas_efcs_api.Controllers
                         :REMARK4R5,
                         :SERVICE_TAX,
                         :SERVICE_AMT,
-                        :EFCS208,
                         :SERVICE2_TAX,
                         :SERVICE2_AMT
                     )";
@@ -474,7 +469,6 @@ namespace hsinchugas_efcs_api.Controllers
                             REMARK4R5 = sync.REMARK4R5,
                             SERVICE_TAX = sync.SERVICE_TAX,
                             SERVICE_AMT = sync.SERVICE_AMT,
-                            EFCS208 = sync.EFCS208,
                             SERVICE2_TAX = sync.SERVICE2_TAX,
                             SERVICE2_AMT = sync.SERVICE2_AMT
                         });
@@ -729,7 +723,6 @@ UPDATE RCPM005 SET
     REMARK4R5      = :REMARK4R5,
     SERVICE_TAX    = :SERVICE_TAX,
     SERVICE_AMT    = :SERVICE_AMT,
-    EFCS208        = :EFCS208
 WHERE CUST_NO = :CUST_NO AND RECEPT_NO = :RECEPT_NO";
 
                         await conn.ExecuteAsync(sql_update, new
@@ -785,7 +778,6 @@ WHERE CUST_NO = :CUST_NO AND RECEPT_NO = :RECEPT_NO";
                             REMARK4R5 = sync.REMARK4R5,
                             SERVICE_TAX = sync.SERVICE_TAX,
                             SERVICE_AMT = sync.SERVICE_AMT,
-                            EFCS208 = sync.EFCS208
                         });
                         number++;
                     }
