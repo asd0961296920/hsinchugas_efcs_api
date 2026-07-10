@@ -635,24 +635,74 @@ namespace hsinchugas_efcs_api.Controllers
                 return Ok(error);
             }
         }
-        /*
         [HttpGet("api/sync/RCPM005/UpdALL")]
-        public async Task<IActionResult> AsyncRCPM005_UpdALL()
+        public async Task<IActionResult> AsyncRCPM005_UpdALL(
+       [FromQuery] string startDate,
+       [FromQuery] string endDate)
         {
+            // ── 1. 驗證日期輸入 ──────────────────────────────────────────
+            if (string.IsNullOrWhiteSpace(startDate) || string.IsNullOrWhiteSpace(endDate))
+            {
+                return BadRequest(new
+                {
+                    DOCDATA = new
+                    {
+                        HEAD = new
+                        {
+                            ICCHK_CODE = "S400",
+                            ICCHK_CODE_DESC = "請輸入日期範圍 (startDate / endDate)，格式 YYYMMDD（例如 1150101）"
+                        }
+                    }
+                });
+            }
+
+            if (!int.TryParse(startDate, out int rocStart) ||
+                !int.TryParse(endDate, out int rocEnd) ||
+                startDate.Length != 7 || endDate.Length != 7)
+            {
+                return BadRequest(new
+                {
+                    DOCDATA = new
+                    {
+                        HEAD = new
+                        {
+                            ICCHK_CODE = "S400",
+                            ICCHK_CODE_DESC = "日期格式錯誤，請使用民國 YYYMMDD（例如 1150101）"
+                        }
+                    }
+                });
+            }
+
+            if (rocStart > rocEnd)
+            {
+                return BadRequest(new
+                {
+                    DOCDATA = new
+                    {
+                        HEAD = new
+                        {
+                            ICCHK_CODE = "S400",
+                            ICCHK_CODE_DESC = "startDate 不可大於 endDate"
+                        }
+                    }
+                });
+            }
+
             try
             {
-                EfcsService.EFCS_LOG(_db, "抓取", "", "RCPM005自動抓取資料排程開始", HttpContext.Connection.RemoteIpAddress?.ToString(), "200");
-                DateTime lastYear = DateTime.Now.AddYears(-1);
-                // 西元轉民國年
-                int rocYear = lastYear.Year - 1911;
-                // 組成民國年月日 (YYYMMDD)
-                int rocDateNumber = int.Parse($"{rocYear:000}{lastYear.Month:00}{lastYear.Day:00}");
+                EfcsService.EFCS_LOG(_db, "修改", "",
+                    $"RCPM005修改資料開始，範圍 {rocStart}~{rocEnd}",
+                    HttpContext.Connection.RemoteIpAddress?.ToString(), "200");
+
                 using var conn = _db.CreateConnection();
                 using var conn_sync = _sync_db.CreateConnection();
-                string sql_u2 = @"SELECT * FROM RCPM005 WHERE RCV_YMD >= :rocDateNumber";
-                var RCPM005 = await conn.QueryAsync(sql_u2, new { rocDateNumber = rocDateNumber });
-                string sql_sync = @"SELECT * FROM HCG.RCPM005 WHERE RCV_YMD >= :rocDateNumber";
-                var RCPM005_sync = await conn_sync.QueryAsync(sql_sync, new { rocDateNumber = rocDateNumber });
+
+                string sql_sync = @"
+            SELECT * FROM HCG.RCPM005
+            WHERE RCV_YMD >= :rocStart AND RCV_YMD <= :rocEnd";
+
+                var RCPM005_sync = await conn_sync.QueryAsync(
+                    sql_sync, new { rocStart, rocEnd });
 
                 int number = 0;
                 int number2 = 0;
@@ -661,8 +711,10 @@ namespace hsinchugas_efcs_api.Controllers
                 {
                     number2++;
 
-                    // 直接查詢本地是否有對應資料
-                    string sql_check = @"SELECT COUNT(1) FROM RCPM005 WHERE CUST_NO = :CUST_NO AND RECEPT_NO = :RECEPT_NO";
+                    string sql_check = @"
+                SELECT COUNT(1) FROM RCPM005
+                WHERE CUST_NO = :CUST_NO AND RECEPT_NO = :RECEPT_NO";
+
                     int exists = await conn.ExecuteScalarAsync<int>(sql_check, new
                     {
                         CUST_NO = sync.CUST_NO,
@@ -671,7 +723,6 @@ namespace hsinchugas_efcs_api.Controllers
 
                     if (exists > 0)
                     {
-                        // 有資料 → UPDATE
                         string sql_update = @"
 UPDATE RCPM005 SET
     RCV_YMD        = :RCV_YMD,
@@ -722,7 +773,7 @@ UPDATE RCPM005 SET
     ADJ_MEMO       = :ADJ_MEMO,
     REMARK4R5      = :REMARK4R5,
     SERVICE_TAX    = :SERVICE_TAX,
-    SERVICE_AMT    = :SERVICE_AMT,
+    SERVICE_AMT    = :SERVICE_AMT
 WHERE CUST_NO = :CUST_NO AND RECEPT_NO = :RECEPT_NO";
 
                         await conn.ExecuteAsync(sql_update, new
@@ -777,20 +828,26 @@ WHERE CUST_NO = :CUST_NO AND RECEPT_NO = :RECEPT_NO";
                             ADJ_MEMO = sync.ADJ_MEMO,
                             REMARK4R5 = sync.REMARK4R5,
                             SERVICE_TAX = sync.SERVICE_TAX,
-                            SERVICE_AMT = sync.SERVICE_AMT,
+                            SERVICE_AMT = sync.SERVICE_AMT
                         });
                         number++;
                     }
-                    // 沒有對應資料 → 跳過，不新增
                 }
 
-                EfcsService.EFCS_LOG(_db, "抓取", "讀取了" + number2 + "筆資料,成功更新" + number + "筆資料", "RCPM005自動抓取資料排程結束", Request.GetDisplayUrl(), "200");
+                EfcsService.EFCS_LOG(_db, "修改",
+                    $"讀取了 {number2} 筆資料，成功更新 {number} 筆資料",
+                    "RCPM005自動抓取資料排程結束",
+                    Request.GetDisplayUrl(), "200");
+
                 return Ok();
             }
             catch (Exception ex)
             {
-                EfcsService.EFCS_LOG(_db, "抓取", ex.Message, "RCPM005自動抓取資料排程失敗", Request.GetDisplayUrl(), "500");
-                var error = new
+                EfcsService.EFCS_LOG(_db, "修改", ex.Message,
+                    "RCPM005自動抓取資料排程失敗",
+                    Request.GetDisplayUrl(), "500");
+
+                return Ok(new
                 {
                     DOCDATA = new
                     {
@@ -800,12 +857,11 @@ WHERE CUST_NO = :CUST_NO AND RECEPT_NO = :RECEPT_NO";
                             ICCHK_CODE_DESC = ex.Message
                         }
                     }
-                };
-                return Ok(error);
+                });
             }
         }
 
-        */
+
 
     }
 }
