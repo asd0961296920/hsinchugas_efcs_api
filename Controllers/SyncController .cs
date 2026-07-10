@@ -780,6 +780,8 @@ WHERE CUST_NO = :CUST_NO AND RECEPT_NO = :RECEPT_NO";
 
                         await conn.ExecuteAsync(sql_update, new
                         {
+                            CUST_NO = sync.CUST_NO,
+                            RECEPT_NO = sync.RECEPT_NO,
                             RCV_YMD = sync.RCV_YMD,
                             VOLUME = sync.VOLUME,
                             LAMP = sync.LAMP,
