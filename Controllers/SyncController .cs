@@ -773,7 +773,9 @@ UPDATE RCPM005 SET
     ADJ_MEMO       = :ADJ_MEMO,
     REMARK4R5      = :REMARK4R5,
     SERVICE_TAX    = :SERVICE_TAX,
-    SERVICE_AMT    = :SERVICE_AMT
+    SERVICE_AMT    = :SERVICE_AMT,
+    SERVICE2_TAX    = :SERVICE2_TAX,
+    SERVICE2_AMT    = :SERVICE2_AMT
 WHERE CUST_NO = :CUST_NO AND RECEPT_NO = :RECEPT_NO";
 
                         await conn.ExecuteAsync(sql_update, new
@@ -828,7 +830,9 @@ WHERE CUST_NO = :CUST_NO AND RECEPT_NO = :RECEPT_NO";
                             ADJ_MEMO = sync.ADJ_MEMO,
                             REMARK4R5 = sync.REMARK4R5,
                             SERVICE_TAX = sync.SERVICE_TAX,
-                            SERVICE_AMT = sync.SERVICE_AMT
+                            SERVICE_AMT = sync.SERVICE_AMT,
+                            SERVICE2_TAX = sync.SERVICE2_TAX,
+                            SERVICE2_AMT = sync.SERVICE2_AMT
                         });
                         number++;
                     }
